@@ -312,13 +312,19 @@ label input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px v
       }catch(e){ try{ new Notification("Conta pronta", opts); }catch(_){} }
     }
   }
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+  const isStandalone = navigator.standalone === true || matchMedia("(display-mode:standalone)").matches;
   function updateNotifUI(){
     const ok = "Notification" in window && Notification.permission==="granted";
     $("#notifChip").classList.toggle("on", ok);
-    $("#notifTxt").textContent = !("Notification" in window) ? "Avisos indisponíveis" : ok ? "Avisos ativos" : Notification.permission==="denied" ? "Avisos bloqueados" : "Ativar avisos";
+    $("#notifTxt").textContent = !("Notification" in window) ? (isIOS && !isStandalone ? "Instale o app para avisos" : "Avisos indisponíveis") : ok ? "Avisos ativos" : Notification.permission==="denied" ? "Avisos bloqueados" : "Ativar avisos";
   }
   $("#notifBtn").onclick = async () => {
-    if(!("Notification" in window)) return toast("Este navegador não suporta notificações. Use HTTPS.", true);
+    if(!("Notification" in window)){
+      return toast(isIOS && !isStandalone
+        ? "No iPhone: toque em Compartilhar, depois Adicionar à Tela de Início, e abra o app por lá."
+        : "Este navegador não oferece notificações. Abra no Chrome, fora de apps como WhatsApp ou Instagram.", true);
+    }
     if(Notification.permission==="denied") return toast("Libere as notificações nas configurações do site.", true);
     await Notification.requestPermission();
     updateNotifUI(); beep();
