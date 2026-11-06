@@ -1,0 +1,31 @@
+{
+  "name": "Claude Reset Radar",
+  "short_name": "Reset Radar",
+  "lang": "pt-BR",
+  "description": "Acompanhe o reset das contas gratuitas do Claude",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F5F3EC",
+  "theme_color": "#C6613F",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

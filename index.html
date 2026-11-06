@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F5F3EC">
 <title>Claude Reset Radar</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Reset Radar">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
@@ -297,7 +305,7 @@ label input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px v
     beep();
     if(navigator.vibrate) navigator.vibrate([250,100,250,100,400]);
     if("Notification" in window && Notification.permission==="granted"){
-      const opts = {body:`${a.email} já pode receber novas mensagens.`, tag:"reset-"+a.id, renotify:true, icon:"icon.svg", requireInteraction:true};
+      const opts = {body:`${a.email} já pode receber novas mensagens.`, tag:"reset-"+a.id, renotify:true, icon:"icon-192.png", badge:"icon-192.png", requireInteraction:true};
       try{
         const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration();
         if(reg) reg.showNotification("Conta pronta", opts); else new Notification("Conta pronta", opts);
