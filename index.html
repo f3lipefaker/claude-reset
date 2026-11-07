@@ -211,7 +211,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
 <dialog id="set"><div class="sheet">
   <div class="grab"></div>
   <h2>Ajustes</h2>
-  <div class="set"><div><b>Avisos no celular</b><small>Notificação quando a conta liberar</small></div><label class="sw"><input type="checkbox" id="swNotif"><i></i></label></div>
+  <div class="set"><div><b>Avisos no celular</b><small>Só com o app aberto ou em segundo plano</small></div><label class="sw"><input type="checkbox" id="swNotif"><i></i></label></div>
   <div class="set"><div><b>Som e vibração</b><small>Toca ao liberar</small></div><label class="sw"><input type="checkbox" id="swSound"><i></i></label></div>
   <div class="set"><div><b>Manter tela ligada</b><small>Ajuda a avisar com o app aberto</small></div><label class="sw"><input type="checkbox" id="swWake"><i></i></label></div>
   <div class="set"><div><b>Avisar antes</b><small>Alerta de quase pronta</small></div>
@@ -382,11 +382,13 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
       }catch(e){ try{ new Notification(title, opts); }catch(_){} }
     }
   }
-  function toast(msg, err, undo){
+  function toast(msg, err, undo, extra){
     const t = document.createElement("div"); t.className = "toast"+(err?" err":"");
     const m = document.createElement("span"); m.textContent = msg; t.appendChild(m);
-    if(undo){ const b = document.createElement("button"); b.textContent = "Desfazer"; b.onclick = () => { undo(); t.remove(); }; t.appendChild(b); }
-    $("#toasts").appendChild(t); setTimeout(() => t.remove(), undo ? 7000 : 4200);
+    const add = (label, fn) => { const b = document.createElement("button"); b.textContent = label; b.onclick = () => { fn(); t.remove(); }; t.appendChild(b); };
+    if(undo) add("Desfazer", undo);
+    if(extra) add(extra.label, extra.fn);
+    $("#toasts").appendChild(t); setTimeout(() => t.remove(), extra ? 9000 : undo ? 7000 : 4200);
   }
   addEventListener("pointerdown", () => { try{ audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }, {once:true});
   let hiddenAt = 0;
@@ -410,7 +412,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     if(act==="limit") return openLim(a);
     const snap = JSON.stringify(state.accounts), undo = () => { state.accounts = JSON.parse(snap); save(); render(); };
     if(act==="ics") return downloadICS([a]);
-    if(act==="use"){ startUse(a); toast(`Contagem iniciada, libera às ${hhmm(endOf(a))}`, false, undo); openId = null; }
+    if(act==="use"){ startUse(a); toast(`Contagem iniciada, libera às ${hhmm(endOf(a))}`, false, undo, {label:"Alarme", fn:() => downloadICS([a])}); openId = null; }
     if(act==="free"){ a.startedAt = null; a.notified = false; a.pre = false; a.exact = false; toast("Conta liberada", false, undo); }
     if(act==="del"){ state.accounts = state.accounts.filter(x => x.id!==id); openId = null; toast("Conta removida", false, undo); }
     save(); render();
@@ -507,7 +509,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     const snap = JSON.stringify(state.accounts), undo = () => { state.accounts = JSON.parse(snap); save(); render(); };
     try{ navigator.clipboard.writeText(c.email); }catch(e){}
     startUse(c); save(); render();
-    toast(`${c.name||c.email}: e-mail copiado, contagem iniciada`, false, undo);
+    toast(`${c.name||c.email}: e-mail copiado, contagem iniciada`, false, undo, {label:"Alarme", fn:() => downloadICS([c])});
     window.open("https://claude.ai/new", "_blank");
   };
   $("#q").oninput = render;
@@ -594,7 +596,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     if(!reset) return toast("Informe o horário ou os minutos restantes.", true);
     const snap = JSON.stringify(state.accounts), undo = () => { state.accounts = JSON.parse(snap); save(); render(); };
     a.startedAt = reset - dur(); a.exact = true; a.notified = false; a.pre = false; a.note = $("#limNote").value.trim();
-    save(); $("#lim").close(); render(); toast(`Libera às ${hhmm(reset)}`, false, undo);
+    save(); $("#lim").close(); render(); toast(`Libera às ${hhmm(reset)}`, false, undo, {label:"Alarme", fn:() => downloadICS([a])});
   });
 
   /* ---------- tema ---------- */
