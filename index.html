@@ -157,6 +157,8 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
 .fld .num{width:100%;text-align:left}
 .nt{font-size:.8rem;color:var(--text);opacity:.85;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .row.open .nt{white-space:normal}
+.row{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.row.dragging{position:relative;z-index:20;border-color:var(--accent);box-shadow:0 18px 40px -12px rgba(0,0,0,.5);transition:none}
 </style>
 </head>
 <body>
@@ -216,6 +218,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
   <div class="set"><div><b>Manter tela ligada</b><small>Ajuda a avisar com o app aberto</small></div><label class="sw"><input type="checkbox" id="swWake"><i></i></label></div>
   <div class="set"><div><b>Avisar antes</b><small>Alerta de quase pronta</small></div>
     <select class="sel" id="selLead"><option value="0">Desligado</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option></select></div>
+  <div class="set"><div><b>Ordem da lista</b><small>Segure e arraste uma conta para mover</small></div><select class="sel" id="selSort" style="width:132px"><option value="auto">Por status</option><option value="manual">Minha ordem</option></select></div>
   <div class="set"><div><b>Janela de reset</b><small>Em horas</small></div><input class="num" type="number" id="durInp" min="1" max="24" step="0.5" inputmode="decimal"></div>
   <div class="set"><div><b>PIN de bloqueio</b><small>Esconde as contas ao abrir</small></div><button class="btn" id="pinBtn">Definir</button></div>
   <button class="btn" id="icsAll">Lembretes no calendário (.ics)</button>
@@ -256,8 +259,8 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
 
   function load(){
     try{ const s = JSON.parse(localStorage.getItem(KEY));
-      if(s && Array.isArray(s.accounts)) return {hours:s.hours||5, lead:s.lead||0, sound:s.sound!==false, updatedAt:s.updatedAt||0, accounts:s.accounts}; }catch(e){}
-    return {hours:5, lead:0, sound:true, updatedAt:0, accounts:[]};
+      if(s && Array.isArray(s.accounts)) return {hours:s.hours||5, lead:s.lead||0, sound:s.sound!==false, updatedAt:s.updatedAt||0, sort:s.sort==="manual"?"manual":"auto", accounts:s.accounts}; }catch(e){}
+    return {hours:5, lead:0, sound:true, updatedAt:0, sort:"auto", accounts:[]};
   }
   const save = quiet => { if(!quiet) state.updatedAt = Date.now(); try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){ toast("Não foi possível salvar neste navegador.", true); } };
   const uid = () => Math.random().toString(36).slice(2,9);
@@ -288,12 +291,16 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
       <button class="btn" data-act="edit">Ajustar</button><button class="btn danger" data-act="del">Remover</button>
       <button class="btn wide" data-act="ics">Lembrete no calendário</button></div></div></article>`;
 
-  function render(){
-    const now = Date.now(), ord = {ready:0, idle:1, counting:2};
-    let list = [...state.accounts].sort((a,b) => {
+  function autoSort(arr, now){
+    const ord = {ready:0, idle:1, counting:2};
+    return [...arr].sort((a,b) => {
       const sa = statusOf(a,now), sb = statusOf(b,now);
       return sa!==sb ? ord[sa]-ord[sb] : (a.startedAt||0)-(b.startedAt||0);
     });
+  }
+  function render(){
+    const now = Date.now();
+    let list = state.sort==="manual" ? [...state.accounts] : autoSort(state.accounts, now);
     if(filter==="ready") list = list.filter(a => statusOf(a,now)!=="counting");
     if(filter==="wait") list = list.filter(a => statusOf(a,now)==="counting");
     const q = ($("#q").value||"").trim().toLowerCase();
@@ -455,7 +462,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
   $("#setBtn").onclick = () => {
     $("#swNotif").checked = "Notification" in window && Notification.permission==="granted";
     $("#swSound").checked = state.sound; $("#swWake").checked = !!wakeLock;
-    $("#selLead").value = String(state.lead); $("#durInp").value = state.hours; sset.showModal();
+    $("#selLead").value = String(state.lead); $("#selSort").value = state.sort || "auto"; $("#durInp").value = state.hours; sset.showModal();
   };
   $("#closeSet").onclick = () => sset.close();
   $("#swNotif").onchange = async e => {
@@ -475,6 +482,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
       else if(wakeLock){ await wakeLock.release(); wakeLock = null; }
     }catch(_){ e.target.checked = false; toast("Seu navegador não permite manter a tela ligada.", true); }
   };
+  $("#selSort").onchange = e => { state.sort = e.target.value; save(); render(); };
   $("#selLead").onchange = e => { state.lead = Number(e.target.value); state.accounts.forEach(a => a.pre = false); save(); };
   $("#durInp").onchange = e => {
     const v = parseFloat(e.target.value);
@@ -490,7 +498,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
   $("#impFile").onchange = async e => {
     try{
       const s = JSON.parse(await e.target.files[0].text()); if(!Array.isArray(s.accounts)) throw 0;
-      state = {hours:s.hours||5, lead:s.lead||0, sound:s.sound!==false,
+      state = {hours:s.hours||5, lead:s.lead||0, sound:s.sound!==false, sort:s.sort==="manual"?"manual":"auto",
         accounts:s.accounts.map(a => ({id:a.id||uid(), email:String(a.email||"conta"), startedAt:a.startedAt||null, notified:!!a.notified, pre:!!a.pre, uses:a.uses||[], name:a.name||"", tag:a.tag||"", exact:!!a.exact, note:a.note||""}))};
       save(); render(); toast("Backup importado");
     }catch(_){ toast("Arquivo inválido.", true); }
@@ -579,6 +587,67 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     if(pinData()){ localStorage.removeItem(KEY+":pin"); updatePinUI(); toast("PIN removido"); }
     else { $("#set").close(); showLock("set"); }
   };
+
+  /* ---------- segurar e arrastar para reordenar ---------- */
+  const listEl = $("#list");
+  let drag = null, suppressUntil = 0;
+  listEl.addEventListener("click", e => { if(Date.now() < suppressUntil){ e.stopPropagation(); e.preventDefault(); } }, true);
+  listEl.addEventListener("contextmenu", e => { if(e.target.closest(".row")) e.preventDefault(); });
+  listEl.addEventListener("pointerdown", e => {
+    const row = e.target.closest(".row");
+    if(!row || e.target.closest(".go,.more") || (e.pointerType==="mouse" && e.button!==0)) return;
+    drag = {row, id:e.pointerId, x:e.clientX, y:e.clientY, on:false, off:0, last:e.clientY, raf:0};
+    drag.timer = setTimeout(startDrag, 380);
+  });
+  function startDrag(){
+    const d = drag; if(!d) return;
+    d.on = true; openId = null; $$(".row.open").forEach(r => r.classList.remove("open"));
+    d.off = d.y - d.row.getBoundingClientRect().top; d.last = d.y;
+    d.row.classList.add("dragging");
+    try{ d.row.setPointerCapture(d.id); }catch(_){}
+    if(navigator.vibrate) navigator.vibrate(18);
+    place(d); d.raf = requestAnimationFrame(autoScroll);
+  }
+  function place(d){
+    const row = d.row, y = d.last, mid = el => { const r = el.getBoundingClientRect(); return r.top + r.height/2; };
+    let n = row.nextElementSibling;
+    while(n && n.classList.contains("row") && y > mid(n)){ listEl.insertBefore(row, n.nextElementSibling); n = row.nextElementSibling; }
+    let p = row.previousElementSibling;
+    while(p && p.classList.contains("row") && y < mid(p)){ listEl.insertBefore(row, p); p = row.previousElementSibling; }
+    row.style.transform = "";
+    const base = row.getBoundingClientRect().top;
+    row.style.transform = `translateY(${y - d.off - base}px) scale(1.02)`;
+  }
+  function autoScroll(){
+    const d = drag; if(!d || !d.on) return;
+    const y = d.last, h = innerHeight; let v = 0;
+    if(y < 110) v = -Math.ceil((110-y)/8); else if(y > h-110) v = Math.ceil((y-(h-110))/8);
+    if(v){ scrollBy(0,v); place(d); }
+    d.raf = requestAnimationFrame(autoScroll);
+  }
+  document.addEventListener("pointermove", e => {
+    const d = drag; if(!d || e.pointerId!==d.id) return;
+    if(!d.on){ if(Math.hypot(e.clientX-d.x, e.clientY-d.y) > 10){ clearTimeout(d.timer); drag = null; } return; }
+    d.last = e.clientY; place(d);
+  });
+  document.addEventListener("touchmove", e => { if(drag && drag.on) e.preventDefault(); }, {passive:false});
+  function endDrag(e){
+    const d = drag; if(!d || e.pointerId!==d.id) return;
+    clearTimeout(d.timer); cancelAnimationFrame(d.raf); drag = null;
+    if(!d.on) return;
+    suppressUntil = Date.now() + 400;
+    d.row.classList.remove("dragging"); d.row.style.transform = "";
+    commitOrder();
+  }
+  document.addEventListener("pointerup", endDrag); document.addEventListener("pointercancel", endDrag);
+  function commitOrder(){
+    const ids = $$("#list .row").map(r => r.dataset.id);
+    if(state.sort!=="manual"){ state.accounts = autoSort(state.accounts, Date.now()); state.sort = "manual"; }
+    const vis = new Set(ids), slots = [], by = Object.fromEntries(state.accounts.map(a => [a.id, a]));
+    state.accounts.forEach((a,i) => { if(vis.has(a.id)) slots.push(i); });
+    ids.forEach((id,k) => { state.accounts[slots[k]] = by[id]; });
+    save(); render(); toast("Ordem salva");
+  }
 
   /* ---------- bati o limite ---------- */
   function openLim(a){
