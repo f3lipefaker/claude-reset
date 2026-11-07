@@ -12,349 +12,348 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Reset Radar">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F5F3EC; --panel:#FBFAF6; --panel2:#EFECE2; --line:#E3DFD2;
-  --text:#1F1E1B; --muted:#6F6B60;
-  --accent:#C6613F; --accent-h:#B5532F; --accent-soft:rgba(198,97,63,.10);
-  --ok:#4C8A5A; --ok-soft:rgba(76,138,90,.12); --idle:#A39D8C; --red:#B3402F;
-  --shadow:0 1px 2px rgba(60,50,30,.05),0 8px 24px -12px rgba(60,50,30,.16);
-  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
-  --sans:"DM Sans","Segoe UI",system-ui,sans-serif;
+  --bg:#F5F3EC;--panel:#FBFAF6;--panel2:#EDEAE0;--line:#E3DFD2;--text:#1F1E1B;--muted:#6F6B60;
+  --accent:#C6613F;--accent-h:#B5532F;--accent-soft:rgba(198,97,63,.12);
+  --ok:#4C8A5A;--ok-soft:rgba(76,138,90,.10);--ok-line:rgba(76,138,90,.4);--red:#B3402F;
+  --shadow:0 1px 2px rgba(60,50,30,.05),0 10px 26px -14px rgba(60,50,30,.2);
+  --serif:"Source Serif 4",Georgia,serif;--sans:"DM Sans","Segoe UI",system-ui,sans-serif;color-scheme:light;
 }
 :root[data-theme="dark"]{
-  --bg:#1F1E1D; --panel:#2A2927; --panel2:#33312E; --line:#3D3A36;
-  --text:#F0EEE6; --muted:#A39E90;
-  --accent:#D97757; --accent-h:#E58868; --accent-soft:rgba(217,119,87,.14);
-  --ok:#86BF93; --ok-soft:rgba(134,191,147,.14); --idle:#7C776B; --red:#E8806F;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px -14px rgba(0,0,0,.6);
+  --bg:#1F1E1D;--panel:#2A2927;--panel2:#252422;--line:#3B3935;--text:#F0EEE6;--muted:#A39E90;
+  --accent:#D97757;--accent-h:#E58868;--accent-soft:rgba(217,119,87,.16);
+  --ok:#86BF93;--ok-soft:rgba(134,191,147,.09);--ok-line:rgba(134,191,147,.38);--red:#E8806F;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 28px -16px rgba(0,0,0,.7);color-scheme:dark;
 }
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#1F1E1D; --panel:#2A2927; --panel2:#33312E; --line:#3D3A36;
-    --text:#F0EEE6; --muted:#A39E90;
-    --accent:#D97757; --accent-h:#E58868; --accent-soft:rgba(217,119,87,.14);
-    --ok:#86BF93; --ok-soft:rgba(134,191,147,.14); --idle:#7C776B; --red:#E8806F;
-    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px -14px rgba(0,0,0,.6);
-  }
-}
-*{box-sizing:border-box;margin:0}
-html{color-scheme:light dark;-webkit-text-size-adjust:100%}
-:root[data-theme="light"]{color-scheme:light}
-:root[data-theme="dark"]{color-scheme:dark}
-body{font-family:var(--sans);color:var(--text);background:var(--bg);min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);line-height:1.45}
-.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 70px}
-button,input{font:inherit;color:inherit}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--sans);color:var(--text);background:var(--bg);min-height:100vh;line-height:1.4;padding-top:env(safe-area-inset-top)}
+.wrap{max-width:720px;margin:0 auto;padding:12px 16px calc(120px + env(safe-area-inset-bottom))}
+button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
 
-header{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:30px}
-.brand{display:flex;align-items:center;gap:14px}
-.logo{width:44px;height:44px;color:var(--accent);flex:none}
-.logo svg{width:100%;height:100%}
-h1{font:500 1.9rem/1.1 var(--serif);letter-spacing:-.015em}
-.sub{font-size:.9rem;color:var(--muted);margin-top:4px}
-.hright{display:flex;align-items:center;gap:14px}
-.clock{font:500 1.5rem var(--serif);font-variant-numeric:tabular-nums;text-align:right;line-height:1.1}
-.clock small{display:block;font:400 .78rem var(--sans);color:var(--muted);margin-top:3px;text-transform:capitalize}
-.icon{width:40px;height:40px;padding:0;display:grid;place-items:center;border-radius:50%}
+header{display:flex;align-items:center;gap:12px;margin:4px 0 18px}
+.logo{width:38px;height:38px;color:var(--accent);flex:none}
+.ttl{flex:1;min-width:0}
+h1{font:500 1.4rem/1.15 var(--serif);letter-spacing:-.01em}
+.clock{font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:2px}
+.ib{width:42px;height:42px;flex:none;border-radius:14px;border:1px solid var(--line);background:var(--panel);display:grid;place-items:center}
+.ib:active{background:var(--panel2)}
 
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 18px;box-shadow:var(--shadow)}
-.stat span{font-size:.82rem;color:var(--muted)}
-.stat b{display:block;font:500 2.2rem/1.15 var(--serif);font-variant-numeric:tabular-nums;margin-top:2px}
-.stat.ready b{color:var(--ok)} .stat.wait b{color:var(--accent)} .stat.next b{font-size:1.75rem;line-height:1.45}
+.hero{position:relative;overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:28px;padding:22px;box-shadow:var(--shadow)}
+.hero::after{content:"";position:absolute;right:-70px;top:-70px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,var(--accent-soft),transparent 70%);pointer-events:none}
+.hero.ok{border-color:var(--ok-line)}
+.hero.ok::after{background:radial-gradient(circle,var(--ok-soft),transparent 70%)}
+.hl{font-size:.85rem;color:var(--muted)}
+.ht{font:500 3.1rem/1.05 var(--serif);font-variant-numeric:tabular-nums;letter-spacing:-.025em;margin:6px 0 6px;color:var(--accent)}
+.hero.ok .ht{color:var(--ok)}
+.hs{font-size:.92rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hbar{height:6px;border-radius:6px;background:var(--line);margin-top:18px;overflow:hidden}
+.hbar i{display:block;height:100%;width:0;border-radius:6px;background:var(--accent);transition:width 1s linear}
+.hero.ok .hbar i{background:var(--ok)}
 
-.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
-.btn{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:9px 15px;font-weight:500;font-size:.88rem;transition:background .15s,border-color .15s}
-.btn:hover{background:var(--panel2);border-color:var(--idle)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn.primary:hover{background:var(--accent-h);border-color:var(--accent-h)}
-.btn.danger:hover{color:var(--red);border-color:var(--red);background:transparent}
-.chip{font-size:.85rem;display:inline-flex;gap:8px;align-items:center}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--idle)}
-.chip.on .dot{background:var(--ok);box-shadow:0 0 0 3px var(--ok-soft)}
-.spacer{flex:1}
-.dur{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted)}
-.dur input{width:62px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}
+.tl{margin-top:12px;padding:14px 16px 12px;background:var(--panel);border:1px solid var(--line);border-radius:20px}
+.tlh{display:flex;justify-content:space-between;font-size:.76rem;color:var(--muted)}
+.tlt{position:relative;height:30px;margin:8px 12px 0}
+.tlt::before{content:"";position:absolute;left:0;right:0;top:14px;height:2px;border-radius:2px;background:var(--line)}
+.tlm{position:absolute;top:3px;width:24px;height:24px;margin-left:-12px;border-radius:50%;background:var(--accent);color:#fff;font:600 .72rem var(--sans);display:grid;place-items:center;border:2px solid var(--panel)}
 
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
-.card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;display:grid;grid-template-columns:104px 1fr;gap:18px;align-items:center;box-shadow:var(--shadow);transition:border-color .3s}
-.card.ready{border-color:var(--ok);background:linear-gradient(var(--ok-soft),var(--ok-soft)),var(--panel)}
-.ring{position:relative;width:104px;height:104px}
-.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.ring .t{fill:none;stroke:var(--line);stroke-width:6}
-.ring .ticks{fill:none;stroke:var(--line);stroke-width:3;stroke-dasharray:1 8.3}
-.ring .p{fill:none;stroke:var(--accent);stroke-width:6;stroke-linecap:round;stroke-dasharray:276.46;transition:stroke-dashoffset 1s linear,stroke .3s}
-.card.ready .p{stroke:var(--ok)} .card.idle .p{stroke:var(--idle)}
-.ring .pct{position:absolute;inset:0;display:grid;place-items:center;font:500 1.25rem var(--serif);font-variant-numeric:tabular-nums}
-.info{min-width:0}
-.email{font-weight:600;font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.state{font-size:.8rem;color:var(--muted);margin:2px 0 8px}
-.time{font:500 2rem/1.05 var(--serif);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-.card.ready .time{color:var(--ok)} .card.counting .time{color:var(--accent)}
-.when{font-size:.8rem;color:var(--muted);margin-top:5px}
-.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
-.acts .btn{padding:7px 11px;font-size:.8rem;border-radius:10px}
+.tabs{display:flex;gap:4px;margin:18px 0 12px;padding:4px;background:var(--panel2);border:1px solid var(--line);border-radius:16px}
+.tab{flex:1;border:0;background:transparent;border-radius:12px;padding:9px 4px;font-size:.86rem;font-weight:500;color:var(--muted)}
+.tab b{font-weight:600;margin-left:4px;font-variant-numeric:tabular-nums}
+.tab.on{background:var(--panel);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 
-.empty{grid-column:1/-1;text-align:center;padding:56px 20px;border:1px dashed var(--idle);border-radius:22px;color:var(--muted)}
-.empty b{display:block;color:var(--text);font:500 1.4rem var(--serif);margin-bottom:8px}
+.list{display:grid;gap:8px}
+.row{background:var(--panel);border:1px solid var(--line);border-radius:22px;overflow:hidden;transition:border-color .25s}
+.row.ready{border-color:var(--ok-line);background:linear-gradient(var(--ok-soft),var(--ok-soft)),var(--panel)}
+.rt{display:flex;align-items:center;gap:10px;padding:12px 12px 12px 14px}
+.rmain{flex:1;min-width:0;display:flex;align-items:center;gap:12px;background:none;border:0;text-align:left;padding:0}
+.av{position:relative;width:48px;height:48px;flex:none}
+.av svg{width:100%;height:100%;transform:rotate(-90deg)}
+.av .t{fill:none;stroke:var(--line);stroke-width:3.5}
+.av .p{fill:none;stroke:var(--accent);stroke-width:3.5;stroke-linecap:round;stroke-dasharray:131.95;stroke-dashoffset:131.95;transition:stroke-dashoffset 1s linear}
+.row.ready .p{stroke:var(--ok)}
+.av span{position:absolute;inset:0;display:grid;place-items:center;font:500 1.15rem var(--serif)}
+.meta{min-width:0;flex:1}
+.em{font-weight:600;font-size:.93rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st{font-size:.78rem;color:var(--muted);margin-top:1px}
+.tm{flex:none;font:500 1.25rem var(--serif);font-variant-numeric:tabular-nums;color:var(--accent)}
+.row:not(.counting) .tm,.row.counting .go{display:none}
+.go{flex:none;border:0;background:var(--accent);color:#fff;border-radius:14px;padding:11px 15px;font-weight:600;font-size:.86rem}
+.go:active{background:var(--accent-h)}
+.more{display:none;padding:0 14px 14px}
+.row.open .more{display:block}
+.mi{font-size:.78rem;color:var(--muted);padding:2px 0 12px;border-top:1px solid var(--line);padding-top:12px}
+.ma{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 12px;font-weight:500;font-size:.86rem}
+.btn:active{background:var(--panel2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.btn.danger{color:var(--red)}
+.empty{text-align:center;padding:44px 20px;border:1px dashed var(--muted);border-radius:22px;color:var(--muted);font-size:.9rem}
+.empty b{display:block;color:var(--text);font:500 1.3rem var(--serif);margin-bottom:6px}
 
-dialog{border:1px solid var(--line);border-radius:22px;background:var(--panel);color:var(--text);padding:0;width:min(430px,92vw);box-shadow:var(--shadow)}
-dialog::backdrop{background:rgba(31,30,27,.45);backdrop-filter:blur(3px)}
-dialog form{padding:24px;display:grid;gap:16px}
-dialog h2{font:500 1.5rem var(--serif)}
+.fab{position:fixed;right:max(18px,calc(50% - 342px));bottom:calc(18px + env(safe-area-inset-bottom));height:56px;padding:0 22px 0 18px;border-radius:28px;border:0;background:var(--accent);color:#fff;font-weight:600;display:flex;gap:8px;align-items:center;box-shadow:0 12px 28px -8px rgba(198,97,63,.65)}
+.fab:active{background:var(--accent-h)}
+
+dialog{border:0;background:var(--panel);color:var(--text);padding:0;width:100%;max-width:560px;max-height:92vh;margin:auto auto 0;border-radius:28px 28px 0 0;box-shadow:var(--shadow)}
+dialog::backdrop{background:rgba(20,18,15,.5);backdrop-filter:blur(3px)}
+@media(min-width:640px){dialog{margin:auto;border-radius:28px}}
+.sheet{padding:10px 20px calc(22px + env(safe-area-inset-bottom));display:grid;gap:14px}
+.grab{width:42px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 4px}
+.sheet h2{font:500 1.5rem var(--serif)}
 label{display:grid;gap:6px;font-size:.85rem;color:var(--muted)}
-label input{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 13px;color:var(--text);font-size:1rem}
-label input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
-.row{display:flex;gap:8px;justify-content:flex-end}
+label input,label textarea,.sel,.num{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 13px;font-size:1rem;color:var(--text);width:100%;resize:none}
+label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
 .hint{font-size:.8rem;color:var(--muted)}
+.row2{display:flex;gap:8px}.row2 .btn{flex:1;padding:13px}
+.set{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-top:1px solid var(--line)}
+.set:first-of-type{border-top:0}
+.set div b{display:block;font-weight:600;font-size:.95rem}
+.set div small{color:var(--muted);font-size:.8rem}
+.sel,.num{width:96px;padding:9px 10px;text-align:center}
+.sw{position:relative;width:50px;height:30px;flex:none}
+.sw input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:1}
+.sw i{position:absolute;inset:0;border-radius:30px;background:var(--line);transition:.2s}
+.sw i::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:.2s}
+.sw input:checked+i{background:var(--accent)}
+.sw input:checked+i::after{transform:translateX(20px)}
 
-#toasts{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom));display:grid;gap:8px;justify-items:center;pointer-events:none;z-index:50}
-.toast{pointer-events:auto;background:var(--text);color:var(--bg);border-radius:14px;padding:12px 18px;font-size:.9rem;box-shadow:var(--shadow);max-width:440px}
+#toasts{position:fixed;left:12px;right:12px;bottom:calc(90px + env(safe-area-inset-bottom));display:grid;gap:8px;justify-items:center;pointer-events:none;z-index:50}
+.toast{background:var(--text);color:var(--bg);border-radius:14px;padding:12px 18px;font-size:.88rem;box-shadow:var(--shadow);max-width:440px;text-align:center}
 .toast.err{background:var(--red);color:#fff}
-
-@media (max-width:520px){
-  .wrap{padding:20px 14px 70px}
-  h1{font-size:1.5rem}
-  .logo{width:36px;height:36px}
-  .clock{font-size:1.2rem}
-  .card{grid-template-columns:88px 1fr;padding:16px;gap:14px}
-  .ring{width:88px;height:88px}
-  .time{font-size:1.65rem}
-  .stat{padding:13px 14px}.stat b{font-size:1.7rem}.stat.next b{font-size:1.2rem;line-height:2}
-  .spacer{display:none}
-}
-@media (prefers-reduced-motion:reduce){.ring .p,.card{transition:none}}
+@media(max-width:380px){.ht{font-size:2.6rem}.go{padding:10px 12px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="brand">
-      <div class="logo" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><path d="M24 24 L24 4" transform="rotate(0 24 24)"/><path d="M24 24 L24 4" transform="rotate(30 24 24)"/><path d="M24 24 L24 4" transform="rotate(60 24 24)"/><path d="M24 24 L24 4" transform="rotate(90 24 24)"/><path d="M24 24 L24 4" transform="rotate(120 24 24)"/><path d="M24 24 L24 4" transform="rotate(150 24 24)"/><path d="M24 24 L24 4" transform="rotate(180 24 24)"/><path d="M24 24 L24 4" transform="rotate(210 24 24)"/><path d="M24 24 L24 4" transform="rotate(240 24 24)"/><path d="M24 24 L24 4" transform="rotate(270 24 24)"/><path d="M24 24 L24 4" transform="rotate(300 24 24)"/><path d="M24 24 L24 4" transform="rotate(330 24 24)"/></svg></div>
-      <div>
-        <h1>Claude Reset Radar</h1>
-        <div class="sub" id="greet">Janela de uso das contas gratuitas</div>
-      </div>
-    </div>
-    <div class="hright"><button class="btn icon" id="themeBtn" aria-label="Alternar tema"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button><div class="clock" id="clock">--:--:--<small id="date"></small></div></div>
+    <svg class="logo" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><g id="rays"></g></svg>
+    <div class="ttl"><h1>Reset Radar</h1><div class="clock" id="clock"></div></div>
+    <button class="ib" id="themeBtn" aria-label="Alternar tema"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+    <button class="ib" id="setBtn" aria-label="Ajustes"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
   </header>
 
-  <section class="stats" aria-label="Resumo">
-    <div class="stat ready"><span>Prontas</span><b id="sReady">0</b></div>
-    <div class="stat wait"><span>Em contagem</span><b id="sWait">0</b></div>
-    <div class="stat next"><span>Próxima libera em</span><b id="sNext">—</b></div>
+  <section class="hero" id="hero" aria-live="polite">
+    <div class="hl" id="hl"></div><div class="ht" id="ht"></div><div class="hs" id="hs"></div>
+    <div class="hbar"><i id="hb"></i></div>
   </section>
 
-  <div class="bar">
-    <button class="btn primary" id="addBtn">+ Adicionar conta</button>
-    <button class="btn" id="notifBtn"><span class="chip" id="notifChip" style="border:0;padding:0"><i class="dot"></i><span id="notifTxt">Ativar avisos</span></span></button>
-    <button class="btn" id="wakeBtn">Manter tela ligada</button>
-    <span class="spacer"></span>
-    <label class="dur" style="display:flex;grid-template-columns:none">Janela (h)
-      <input type="number" id="durInp" min="1" max="24" step="0.5" inputmode="decimal">
-    </label>
-    <button class="btn" id="expBtn">Exportar</button>
-    <button class="btn" id="impBtn">Importar</button>
-    <input type="file" id="impFile" accept="application/json" hidden>
-  </div>
+  <section class="tl" id="tl" hidden>
+    <div class="tlh"><span>Agora</span><span id="tlr"></span></div>
+    <div class="tlt" id="tlt"></div>
+  </section>
 
-  <main class="grid" id="grid"></main>
+  <nav class="tabs" aria-label="Filtro">
+    <button class="tab on" data-f="all">Todas<b id="cAll">0</b></button>
+    <button class="tab" data-f="ready">Prontas<b id="cReady">0</b></button>
+    <button class="tab" data-f="wait">Contando<b id="cWait">0</b></button>
+  </nav>
+
+  <main class="list" id="list"></main>
 </div>
 
-<dialog id="dlg">
-  <form method="dialog" id="form">
-    <h2 id="dlgTitle">Adicionar conta</h2>
-    <label>E-mail ou apelido
-      <input id="fEmail" type="text" required autocomplete="off" placeholder="conta1@gmail.com">
-    </label>
-    <label>Última mensagem enviada há (minutos)
-      <input id="fAgo" type="number" min="0" step="1" inputmode="numeric" placeholder="vazio = conta livre">
-    </label>
-    <p class="hint">Se a conta já está em contagem, informe há quantos minutos você começou a usar. Deixe vazio para uma conta livre.</p>
-    <div class="row">
-      <button type="button" class="btn" id="cancelBtn">Cancelar</button>
-      <button type="submit" class="btn primary">Salvar</button>
-    </div>
-  </form>
-</dialog>
+<button class="fab" id="addBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Adicionar</button>
+
+<dialog id="dlg"><form method="dialog" class="sheet" id="form">
+  <div class="grab"></div>
+  <h2 id="dlgTitle">Adicionar contas</h2>
+  <label><span id="fLabel">E-mails (um por linha)</span>
+    <textarea id="fEmail" rows="4" required autocomplete="off" placeholder="conta1@gmail.com&#10;conta2@gmail.com"></textarea></label>
+  <label>Última mensagem enviada há (minutos)
+    <input id="fAgo" type="number" min="0" step="1" inputmode="numeric" placeholder="vazio = conta livre"></label>
+  <p class="hint">Se a conta já está em contagem, diga há quantos minutos você começou. Vazio cadastra como livre.</p>
+  <div class="row2"><button type="button" class="btn" id="cancelBtn">Cancelar</button><button type="submit" class="btn primary">Salvar</button></div>
+</form></dialog>
+
+<dialog id="set"><div class="sheet">
+  <div class="grab"></div>
+  <h2>Ajustes</h2>
+  <div class="set"><div><b>Avisos no celular</b><small>Notificação quando a conta liberar</small></div><label class="sw"><input type="checkbox" id="swNotif"><i></i></label></div>
+  <div class="set"><div><b>Som e vibração</b><small>Toca ao liberar</small></div><label class="sw"><input type="checkbox" id="swSound"><i></i></label></div>
+  <div class="set"><div><b>Manter tela ligada</b><small>Ajuda a avisar com o app aberto</small></div><label class="sw"><input type="checkbox" id="swWake"><i></i></label></div>
+  <div class="set"><div><b>Avisar antes</b><small>Alerta de quase pronta</small></div>
+    <select class="sel" id="selLead"><option value="0">Desligado</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option></select></div>
+  <div class="set"><div><b>Janela de reset</b><small>Em horas</small></div><input class="num" type="number" id="durInp" min="1" max="24" step="0.5" inputmode="decimal"></div>
+  <div class="row2"><button class="btn" id="expBtn">Exportar backup</button><button class="btn" id="impBtn">Importar backup</button></div>
+  <input type="file" id="impFile" accept="application/json" hidden>
+  <button class="btn primary" id="closeSet">Pronto</button>
+</div></dialog>
 
 <div id="toasts" aria-live="polite"></div>
 
 <script>
 (() => {
-  const KEY = "claude-reset-radar:v1";
-  const C = 276.46; // circunferência do anel (r=44)
-  const $ = s => document.querySelector(s);
-  let state = load();
-  let editingId = null;
-  let audioCtx = null, wakeLock = null;
+  const KEY = "claude-reset-radar:v1", C = 131.95;
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const root = document.documentElement;
+  let state = load(), filter = "all", openId = null, editingId = null, audioCtx = null, wakeLock = null;
 
   function load(){
-    try{
-      const s = JSON.parse(localStorage.getItem(KEY));
-      if(s && Array.isArray(s.accounts)) return {hours: s.hours || 5, accounts: s.accounts};
-    }catch(e){}
-    return {hours:5, accounts:[]};
+    try{ const s = JSON.parse(localStorage.getItem(KEY));
+      if(s && Array.isArray(s.accounts)) return {hours:s.hours||5, lead:s.lead||0, sound:s.sound!==false, accounts:s.accounts}; }catch(e){}
+    return {hours:5, lead:0, sound:true, accounts:[]};
   }
-  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){ toast("Não foi possível salvar neste navegador.", true); } }
+  const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){ toast("Não foi possível salvar neste navegador.", true); } };
   const uid = () => Math.random().toString(36).slice(2,9);
-  const dur = () => state.hours * 3600000;
+  const dur = () => state.hours*3600000;
   const endOf = a => a.startedAt + dur();
-  const fmt = ms => {
-    ms = Math.max(0, Math.ceil(ms/1000));
-    const h = Math.floor(ms/3600), m = Math.floor(ms%3600/60), s = ms%60;
-    return [h,m,s].map(n => String(n).padStart(2,"0")).join(":");
-  };
+  const pad = n => String(n).padStart(2,"0");
+  const fmt = ms => { ms = Math.max(0, Math.ceil(ms/1000)); return `${pad(Math.floor(ms/3600))}:${pad(Math.floor(ms%3600/60))}:${pad(ms%60)}`; };
   const hhmm = t => new Date(t).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-  const esc = s => s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const statusOf = (a, now) => !a.startedAt ? "idle" : (now >= endOf(a) ? "ready" : "counting");
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const initial = a => (a.email.trim()[0] || "?").toUpperCase();
+  const statusOf = (a,now) => !a.startedAt ? "idle" : now >= endOf(a) ? "ready" : "counting";
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+  const isStandalone = navigator.standalone === true || matchMedia("(display-mode:standalone)").matches;
 
-  /* ---------- render ---------- */
+  /* marca */
+  $("#rays").innerHTML = Array.from({length:12}, (_,i) => `<path d="M24 24 L24 ${i%2?8:4}" transform="rotate(${i*30} 24 24)"/>`).join("");
+
+  /* ---------- lista ---------- */
+  const rowHTML = a => `<article class="row${a.id===openId?" open":""}" data-id="${a.id}">
+    <div class="rt"><button class="rmain" data-act="toggle">
+      <div class="av"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="t" cx="24" cy="24" r="21"/><circle class="p" cx="24" cy="24" r="21"/></svg><span>${esc(initial(a))}</span></div>
+      <div class="meta"><div class="em">${esc(a.email)}</div><div class="st"></div></div>
+      <div class="tm"></div></button>
+      <button class="go" data-act="use">Usei agora</button></div>
+    <div class="more"><div class="mi"></div><div class="ma">
+      <button class="btn" data-act="copy">Copiar e-mail</button><button class="btn" data-act="free">Liberar</button>
+      <button class="btn" data-act="edit">Ajustar</button><button class="btn danger" data-act="del">Remover</button></div></div></article>`;
+
   function render(){
-    const g = $("#grid");
-    if(!state.accounts.length){
-      g.innerHTML = '<div class="empty"><b>Nenhuma conta ainda</b>Adicione o e-mail de uma conta gratuita e toque em “Usei agora” quando enviar sua primeira mensagem.</div>';
-      tick(); return;
-    }
-    const now = Date.now();
-    const order = {ready:0, idle:1, counting:2};
-    const list = [...state.accounts].sort((a,b) => {
+    const now = Date.now(), ord = {ready:0, idle:1, counting:2};
+    let list = [...state.accounts].sort((a,b) => {
       const sa = statusOf(a,now), sb = statusOf(b,now);
-      if(sa!==sb) return order[sa]-order[sb];
-      return (a.startedAt||0) - (b.startedAt||0);
+      return sa!==sb ? ord[sa]-ord[sb] : (a.startedAt||0)-(b.startedAt||0);
     });
-    g.innerHTML = list.map(a => `
-      <article class="card" data-id="${a.id}">
-        <div class="ring">
-          <svg viewBox="0 0 100 100" aria-hidden="true">
-            <circle class="ticks" cx="50" cy="50" r="47.5"/>
-            <circle class="t" cx="50" cy="50" r="44"/>
-            <circle class="p" cx="50" cy="50" r="44"/>
-          </svg>
-          <div class="pct"></div>
-        </div>
-        <div class="info">
-          <div class="email" title="${esc(a.email)}">${esc(a.email)}</div>
-          <div class="state"></div>
-          <div class="time"></div>
-          <div class="when"></div>
-          <div class="acts">
-            <button class="btn primary" data-act="use">Usei agora</button>
-            <button class="btn" data-act="free">Liberar</button>
-            <button class="btn" data-act="edit">Ajustar</button>
-            <button class="btn danger" data-act="del">Remover</button>
-          </div>
-        </div>
-      </article>`).join("");
+    if(filter==="ready") list = list.filter(a => statusOf(a,now)!=="counting");
+    if(filter==="wait") list = list.filter(a => statusOf(a,now)==="counting");
+    $("#list").innerHTML = list.length ? list.map(rowHTML).join("")
+      : state.accounts.length ? '<div class="empty"><b>Nada por aqui</b>Nenhuma conta nesta aba.</div>'
+      : '<div class="empty"><b>Nenhuma conta ainda</b>Toque em Adicionar e cadastre seus e-mails. Ao enviar a primeira mensagem de cada conta, toque em “Usei agora”.</div>';
     tick();
   }
 
-  /* ---------- tick (1s) ---------- */
   function tick(){
-    const now = Date.now();
-    $("#clock").firstChild.nodeValue = new Date(now).toLocaleTimeString("pt-BR");
-    $("#date").textContent = new Date(now).toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"});
-    let ready=0, wait=0, next=Infinity, fired=false;
-
+    const now = Date.now(), lead = state.lead*60000, d = new Date(now);
+    $("#clock").textContent = d.toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"short"}) + "  " + d.toLocaleTimeString("pt-BR");
+    let ready = 0, wait = 0, nx = null, dirty = false;
     state.accounts.forEach(a => {
-      const st = statusOf(a, now);
-      if(st==="ready"){ ready++; if(!a.notified){ a.notified = true; fired = true; notify(a); } }
-      if(st==="counting"){ wait++; next = Math.min(next, endOf(a)-now); }
-      if(st==="idle") ready++;
-      const el = document.querySelector(`.card[data-id="${a.id}"]`);
-      if(!el) return;
-      el.className = "card " + st;
-      const left = st==="counting" ? endOf(a)-now : 0;
-      const prog = st==="counting" ? (now-a.startedAt)/dur() : 1;
+      const st = statusOf(a,now), left = st==="counting" ? endOf(a)-now : 0;
+      if(st==="counting"){
+        wait++; if(!nx || left<nx.left) nx = {a,left};
+        if(lead && !a.pre && left<=lead){ a.pre = true; dirty = true; notify(a,"pre",left); }
+      } else {
+        ready++;
+        if(st==="ready" && !a.notified){ a.notified = true; dirty = true; notify(a,"ready"); }
+      }
+      const el = document.querySelector(`.row[data-id="${a.id}"]`); if(!el) return;
+      el.classList.remove("ready","idle","counting"); el.classList.add(st);
+      const prog = st==="counting" ? (now-a.startedAt)/dur() : st==="ready" ? 1 : 0;
       el.querySelector(".p").style.strokeDashoffset = C*(1-Math.min(1,prog));
-      el.querySelector(".pct").textContent = st==="counting" ? Math.floor(prog*100)+"%" : "OK";
-      el.querySelector(".state").textContent = st==="ready" ? "Pronta para uso" : st==="idle" ? "Livre, sem contagem" : "Aguardando reset";
-      el.querySelector(".time").textContent = st==="counting" ? fmt(left) : "Pronta";
-      el.querySelector(".when").textContent = st==="counting" ? "Libera às "+hhmm(endOf(a)) : st==="ready" ? "Liberada às "+hhmm(endOf(a)) : "Toque em “Usei agora” ao começar";
+      el.querySelector(".tm").textContent = fmt(left);
+      el.querySelector(".st").textContent = st==="counting" ? "Libera às "+hhmm(endOf(a)) : st==="ready" ? "Pronta desde "+hhmm(endOf(a)) : "Livre, sem contagem";
+      if(a.id===openId){
+        const n = (a.uses||[]).filter(t => now-t < 864e5).length;
+        el.querySelector(".mi").textContent = n ? `${n} ${n>1?"usos":"uso"} nas últimas 24 horas` : "Nenhum uso nas últimas 24 horas";
+      }
     });
-    if(fired) save();
-    $("#sReady").textContent = ready;
-    $("#sWait").textContent = wait;
-    $("#sNext").textContent = next===Infinity ? "—" : fmt(next);
-    document.title = (ready ? `(${ready}) ` : "") + "Claude Reset Radar";
+    if(dirty) save();
+
+    $("#cAll").textContent = state.accounts.length; $("#cReady").textContent = ready; $("#cWait").textContent = wait;
+    const hero = $("#hero");
+    if(ready){
+      hero.className = "hero ok"; $("#hl").textContent = "Prontas para usar";
+      $("#ht").textContent = ready + (ready>1 ? " contas" : " conta");
+      $("#hs").textContent = nx ? `Mais ${wait} ${wait>1?"liberam":"libera"}: a próxima em ${fmt(nx.left)}` : "Pode mandar novas mensagens agora";
+      $("#hb").style.width = "100%";
+    } else if(nx){
+      hero.className = "hero"; $("#hl").textContent = "Próxima libera em";
+      $("#ht").textContent = fmt(nx.left); $("#hs").textContent = `${nx.a.email}, às ${hhmm(endOf(nx.a))}`;
+      $("#hb").style.width = (100 - nx.left/dur()*100) + "%";
+    } else {
+      hero.className = "hero"; $("#hl").textContent = "Comece por aqui";
+      $("#ht").textContent = "Sem contas"; $("#hs").textContent = "Adicione um e-mail para acompanhar o reset"; $("#hb").style.width = "0";
+    }
+    const tl = $("#tl"); tl.hidden = !wait;
+    if(wait){
+      $("#tlr").textContent = "em " + state.hours + " h";
+      $("#tlt").innerHTML = state.accounts.filter(a => statusOf(a,now)==="counting")
+        .map(a => `<span class="tlm" style="left:${Math.min(100,(endOf(a)-now)/dur()*100)}%" title="${esc(a.email)}">${esc(initial(a))}</span>`).join("");
+    }
+    document.title = (ready ? `(${ready}) ` : "") + "Reset Radar";
+    try{ ready ? navigator.setAppBadge && navigator.setAppBadge(ready) : navigator.clearAppBadge && navigator.clearAppBadge(); }catch(e){}
   }
 
   /* ---------- avisos ---------- */
   function beep(){
     try{
       audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+      if(audioCtx.state==="suspended") audioCtx.resume();
       [660,880,1100].forEach((f,i) => {
-        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-        o.frequency.value = f; o.type = "sine";
-        g.gain.setValueAtTime(.0001, audioCtx.currentTime + i*.18);
-        g.gain.exponentialRampToValueAtTime(.25, audioCtx.currentTime + i*.18 + .02);
-        g.gain.exponentialRampToValueAtTime(.0001, audioCtx.currentTime + i*.18 + .16);
-        o.connect(g).connect(audioCtx.destination);
-        o.start(audioCtx.currentTime + i*.18); o.stop(audioCtx.currentTime + i*.18 + .17);
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime + i*.18;
+        o.frequency.value = f; g.gain.setValueAtTime(.0001,t);
+        g.gain.exponentialRampToValueAtTime(.25,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+.16);
+        o.connect(g).connect(audioCtx.destination); o.start(t); o.stop(t+.17);
       });
     }catch(e){}
   }
-  async function notify(a){
-    toast(`${a.email} está pronta para uso`);
-    beep();
-    if(navigator.vibrate) navigator.vibrate([250,100,250,100,400]);
+  async function notify(a, kind, left){
+    const pre = kind==="pre", mins = pre ? Math.ceil(left/60000) : 0;
+    toast(pre ? `${a.email} libera em ${mins} min` : `${a.email} está pronta para uso`);
+    if(state.sound){ beep(); if(navigator.vibrate) navigator.vibrate([250,100,250,100,400]); }
     if("Notification" in window && Notification.permission==="granted"){
-      const opts = {body:`${a.email} já pode receber novas mensagens.`, tag:"reset-"+a.id, renotify:true, icon:"icon-192.png", badge:"icon-192.png", requireInteraction:true};
+      const opts = {body: pre ? `${a.email} libera em ${mins} min.` : `${a.email} já pode receber novas mensagens.`, tag:(pre?"pre-":"reset-")+a.id, renotify:true, icon:"icon-192.png", badge:"icon-192.png"};
+      const title = pre ? "Quase pronta" : "Conta pronta";
       try{
         const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration();
-        if(reg) reg.showNotification("Conta pronta", opts); else new Notification("Conta pronta", opts);
-      }catch(e){ try{ new Notification("Conta pronta", opts); }catch(_){} }
+        if(reg) reg.showNotification(title, opts); else new Notification(title, opts);
+      }catch(e){ try{ new Notification(title, opts); }catch(_){} }
     }
   }
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
-  const isStandalone = navigator.standalone === true || matchMedia("(display-mode:standalone)").matches;
-  function updateNotifUI(){
-    const ok = "Notification" in window && Notification.permission==="granted";
-    $("#notifChip").classList.toggle("on", ok);
-    $("#notifTxt").textContent = !("Notification" in window) ? (isIOS && !isStandalone ? "Instale o app para avisos" : "Avisos indisponíveis") : ok ? "Avisos ativos" : Notification.permission==="denied" ? "Avisos bloqueados" : "Ativar avisos";
+  function toast(msg, err){
+    const t = document.createElement("div"); t.className = "toast"+(err?" err":""); t.textContent = msg;
+    $("#toasts").appendChild(t); setTimeout(() => t.remove(), 4200);
   }
-  $("#notifBtn").onclick = async () => {
-    if(!("Notification" in window)){
-      return toast(isIOS && !isStandalone
-        ? "No iPhone: toque em Compartilhar, depois Adicionar à Tela de Início, e abra o app por lá."
-        : "Este navegador não oferece notificações. Abra no Chrome, fora de apps como WhatsApp ou Instagram.", true);
-    }
-    if(Notification.permission==="denied") return toast("Libere as notificações nas configurações do site.", true);
-    await Notification.requestPermission();
-    updateNotifUI(); beep();
-    if(Notification.permission==="granted") toast("Avisos ativados");
-  };
-  $("#wakeBtn").onclick = async () => {
-    try{
-      if(wakeLock){ await wakeLock.release(); wakeLock=null; $("#wakeBtn").textContent="Manter tela ligada"; return; }
-      wakeLock = await navigator.wakeLock.request("screen");
-      wakeLock.addEventListener("release", () => { wakeLock=null; $("#wakeBtn").textContent="Manter tela ligada"; });
-      $("#wakeBtn").textContent = "Tela ligada: ativo";
-    }catch(e){ toast("Seu navegador não permite manter a tela ligada.", true); }
-  };
+  addEventListener("pointerdown", () => { try{ audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }, {once:true});
   document.addEventListener("visibilitychange", async () => {
-    if(!document.hidden){ tick(); if($("#wakeBtn").textContent.includes("ativo") && !wakeLock){ try{ wakeLock = await navigator.wakeLock.request("screen"); }catch(e){} } }
+    if(document.hidden) return; tick();
+    if($("#swWake").checked && !wakeLock){ try{ wakeLock = await navigator.wakeLock.request("screen"); }catch(e){} }
   });
 
-  function toast(msg, err){
-    const t = document.createElement("div");
-    t.className = "toast" + (err?" err":""); t.textContent = msg;
-    $("#toasts").appendChild(t);
-    setTimeout(() => t.remove(), 4500);
-  }
-
   /* ---------- ações ---------- */
+  $("#list").addEventListener("click", async e => {
+    const b = e.target.closest("[data-act]"); if(!b) return;
+    const row = b.closest(".row"), id = row.dataset.id, a = state.accounts.find(x => x.id===id), act = b.dataset.act, now = Date.now();
+    if(act==="toggle"){ openId = openId===id ? null : id; $$(".row").forEach(r => r.classList.toggle("open", r.dataset.id===openId)); return tick(); }
+    if(act==="copy"){
+      try{ await navigator.clipboard.writeText(a.email); toast("E-mail copiado"); }catch(_){ toast("Não foi possível copiar.", true); }
+      return;
+    }
+    if(act==="edit") return openDlg(a);
+    if(act==="use"){
+      a.startedAt = now; a.notified = false; a.pre = false; a.uses = [...(a.uses||[]).filter(t => now-t < 864e5), now];
+      if(navigator.vibrate) navigator.vibrate(30); toast(`Contagem iniciada, libera às ${hhmm(endOf(a))}`); openId = null;
+    }
+    if(act==="free"){ a.startedAt = null; a.notified = false; a.pre = false; }
+    if(act==="del"){ if(!confirm(`Remover ${a.email}?`)) return; state.accounts = state.accounts.filter(x => x.id!==id); openId = null; }
+    save(); render();
+  });
+  $$(".tab").forEach(t => t.onclick = () => { filter = t.dataset.f; $$(".tab").forEach(x => x.classList.toggle("on", x===t)); render(); });
+
   const dlg = $("#dlg");
   function openDlg(a){
     editingId = a ? a.id : null;
-    $("#dlgTitle").textContent = a ? "Ajustar conta" : "Adicionar conta";
-    $("#fEmail").value = a ? a.email : "";
+    $("#dlgTitle").textContent = a ? "Ajustar conta" : "Adicionar contas";
+    $("#fLabel").textContent = a ? "E-mail ou apelido" : "E-mails (um por linha)";
+    $("#fEmail").rows = a ? 1 : 4; $("#fEmail").value = a ? a.email : "";
     $("#fAgo").value = a && a.startedAt ? Math.max(0, Math.round((Date.now()-a.startedAt)/60000)) : "";
     dlg.showModal(); $("#fEmail").focus();
   }
@@ -362,74 +361,83 @@ label input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px v
   $("#cancelBtn").onclick = () => dlg.close();
   $("#form").addEventListener("submit", e => {
     e.preventDefault();
-    const email = $("#fEmail").value.trim(); if(!email) return;
-    const agoRaw = $("#fAgo").value.trim();
+    const raw = $("#fEmail").value, agoRaw = $("#fAgo").value.trim();
     const startedAt = agoRaw==="" ? null : Date.now() - Number(agoRaw)*60000;
+    const done = startedAt && Date.now() >= startedAt + dur();
     if(editingId){
-      const a = state.accounts.find(x => x.id===editingId);
-      a.email = email; a.startedAt = startedAt; a.notified = !!startedAt && Date.now() >= startedAt+dur();
+      const a = state.accounts.find(x => x.id===editingId), email = raw.trim().split("\n")[0];
+      if(!email) return; a.email = email; a.startedAt = startedAt; a.notified = !!done; a.pre = false;
     } else {
-      state.accounts.push({id:uid(), email, startedAt, notified: !!startedAt && Date.now() >= startedAt+dur()});
+      const emails = raw.split(/[\n,;]+/).map(t => t.trim()).filter(Boolean);
+      if(!emails.length) return;
+      emails.forEach(email => state.accounts.push({id:uid(), email, startedAt, notified:!!done, pre:false, uses:[]}));
+      toast(emails.length>1 ? `${emails.length} contas adicionadas` : "Conta adicionada");
     }
     save(); dlg.close(); render();
   });
+  [dlg, $("#set")].forEach(d => d.addEventListener("click", e => { if(e.target===d) d.close(); }));
 
-  $("#grid").addEventListener("click", e => {
-    const b = e.target.closest("[data-act]"); if(!b) return;
-    const id = b.closest(".card").dataset.id;
-    const a = state.accounts.find(x => x.id===id);
-    const act = b.dataset.act;
-    if(act==="use"){ a.startedAt = Date.now(); a.notified = false; audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)(); toast(`Contagem iniciada: libera às ${hhmm(endOf(a))}`); }
-    if(act==="free"){ a.startedAt = null; a.notified = false; }
-    if(act==="edit") return openDlg(a);
-    if(act==="del"){ if(!confirm(`Remover ${a.email}?`)) return; state.accounts = state.accounts.filter(x => x.id!==id); }
-    save(); render();
-  });
-
-  $("#durInp").value = state.hours;
+  /* ---------- ajustes ---------- */
+  const sset = $("#set");
+  $("#setBtn").onclick = () => {
+    $("#swNotif").checked = "Notification" in window && Notification.permission==="granted";
+    $("#swSound").checked = state.sound; $("#swWake").checked = !!wakeLock;
+    $("#selLead").value = String(state.lead); $("#durInp").value = state.hours; sset.showModal();
+  };
+  $("#closeSet").onclick = () => sset.close();
+  $("#swNotif").onchange = async e => {
+    if(!("Notification" in window)){
+      e.target.checked = false;
+      return toast(isIOS && !isStandalone ? "No iPhone, instale o app: Compartilhar, depois Adicionar à Tela de Início, e abra por lá." : "Este navegador não oferece notificações. Abra no Chrome.", true);
+    }
+    if(e.target.checked){
+      const p = await Notification.requestPermission(); e.target.checked = p==="granted";
+      p==="granted" ? (toast("Avisos ativados"), beep()) : toast("Permissão negada. Libere nas configurações do navegador.", true);
+    } else { e.target.checked = Notification.permission==="granted"; toast("Para desativar, use as configurações do navegador."); }
+  };
+  $("#swSound").onchange = e => { state.sound = e.target.checked; save(); if(state.sound) beep(); };
+  $("#swWake").onchange = async e => {
+    try{
+      if(e.target.checked){ wakeLock = await navigator.wakeLock.request("screen"); wakeLock.addEventListener("release", () => { wakeLock = null; }); }
+      else if(wakeLock){ await wakeLock.release(); wakeLock = null; }
+    }catch(_){ e.target.checked = false; toast("Seu navegador não permite manter a tela ligada.", true); }
+  };
+  $("#selLead").onchange = e => { state.lead = Number(e.target.value); state.accounts.forEach(a => a.pre = false); save(); };
   $("#durInp").onchange = e => {
     const v = parseFloat(e.target.value);
     if(!(v>=1 && v<=24)){ e.target.value = state.hours; return; }
-    state.hours = v;
-    state.accounts.forEach(a => a.notified = !!a.startedAt && Date.now() >= endOf(a));
-    save(); render();
+    state.hours = v; state.accounts.forEach(a => { a.notified = !!a.startedAt && Date.now() >= endOf(a); a.pre = false; }); save(); render();
   };
-
   $("#expBtn").onclick = () => {
-    const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob); a.download = "claude-reset-radar.json"; a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(state,null,2)], {type:"application/json"}));
+    a.download = "claude-reset-radar.json"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   };
   $("#impBtn").onclick = () => $("#impFile").click();
   $("#impFile").onchange = async e => {
     try{
-      const s = JSON.parse(await e.target.files[0].text());
-      if(!Array.isArray(s.accounts)) throw 0;
-      state = {hours: s.hours||5, accounts: s.accounts.map(a => ({id:a.id||uid(), email:String(a.email||"conta"), startedAt:a.startedAt||null, notified:!!a.notified}))};
-      $("#durInp").value = state.hours; save(); render(); toast("Backup importado");
+      const s = JSON.parse(await e.target.files[0].text()); if(!Array.isArray(s.accounts)) throw 0;
+      state = {hours:s.hours||5, lead:s.lead||0, sound:s.sound!==false,
+        accounts:s.accounts.map(a => ({id:a.id||uid(), email:String(a.email||"conta"), startedAt:a.startedAt||null, notified:!!a.notified, pre:!!a.pre, uses:a.uses||[]}))};
+      save(); render(); toast("Backup importado");
     }catch(_){ toast("Arquivo inválido.", true); }
     e.target.value = "";
   };
 
-  /* ---------- tema e saudação ---------- */
-  const root = document.documentElement;
-  try{ const t = localStorage.getItem(KEY+":theme"); if(t) root.dataset.theme = t; }catch(e){}
-  const isDark = () => root.dataset.theme ? root.dataset.theme==="dark" : matchMedia("(prefers-color-scheme:dark)").matches;
-  const syncMeta = () => document.querySelector('meta[name="theme-color"]').content = isDark() ? "#1F1E1D" : "#F5F3EC";
+  /* ---------- tema ---------- */
+  const mq = matchMedia("(prefers-color-scheme:dark)");
+  let saved = null; try{ saved = localStorage.getItem(KEY+":theme"); }catch(e){}
+  const applyTheme = t => { root.dataset.theme = t; document.querySelector('meta[name="theme-color"]').content = t==="dark" ? "#1F1E1D" : "#F5F3EC"; };
+  applyTheme(saved || (mq.matches ? "dark" : "light"));
+  mq.addEventListener && mq.addEventListener("change", e => { if(!saved) applyTheme(e.matches ? "dark" : "light"); });
   $("#themeBtn").onclick = () => {
-    root.dataset.theme = isDark() ? "light" : "dark";
-    try{ localStorage.setItem(KEY+":theme", root.dataset.theme); }catch(e){}
-    syncMeta();
+    saved = root.dataset.theme==="dark" ? "light" : "dark"; applyTheme(saved);
+    try{ localStorage.setItem(KEY+":theme", saved); }catch(e){}
   };
-  syncMeta();
-  const h = new Date().getHours();
-  $("#greet").textContent = (h<5 ? "Boa madrugada" : h<12 ? "Bom dia" : h<18 ? "Boa tarde" : "Boa noite") + ". Veja quais contas já podem voltar a conversar.";
 
   /* ---------- início ---------- */
   if("serviceWorker" in navigator && location.protocol!=="file:") navigator.serviceWorker.register("sw.js").catch(() => {});
-  updateNotifUI(); render();
-  setInterval(tick, 1000);
+  render(); setInterval(tick, 1000);
 })();
 </script>
 </body>
