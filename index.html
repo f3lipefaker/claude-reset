@@ -129,6 +129,32 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
 .toast.err{background:var(--red);color:#fff}
 @media(max-width:380px){.ht{font-size:2.6rem}.go{padding:10px 12px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.toast{pointer-events:auto;display:flex;align-items:center;gap:14px}
+.toast button{border:0;background:none;color:inherit;font-weight:700;text-decoration:underline;padding:0}
+.srch{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:11px 14px;font-size:.95rem;margin-bottom:12px;color:var(--text)}
+.srch:focus{outline:none;border-color:var(--accent)}
+.tag{display:inline-block;font:500 .68rem var(--sans);padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);margin-left:6px;vertical-align:1px}
+.ma .wide{grid-column:1/-1}
+.row:not(.counting) [data-act="ics"]{display:none}
+.hero .btn.primary{position:relative;z-index:1;margin-top:16px;width:100%;padding:14px;font-size:.95rem}
+#lock{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center;padding:24px}
+#lock form{display:grid;gap:14px;width:min(320px,100%);text-align:center}
+#lock .logo{margin:0 auto}
+#lock h2{font:500 1.5rem var(--serif)}
+#pinIn{text-align:center;font-size:1.6rem;letter-spacing:.5em;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--panel);color:var(--text)}
+#pinIn:focus{outline:none;border-color:var(--accent)}
+.bars{display:flex;align-items:flex-end;gap:3px;height:80px}
+.bars i{flex:1;background:var(--accent);border-radius:3px 3px 0 0;opacity:.85}
+.bl{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted);margin-top:4px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:12px}
+.kpi b{display:block;font:500 1.6rem var(--serif)}.kpi small{color:var(--muted);font-size:.76rem}
+.srow{display:flex;justify-content:space-between;gap:12px;font-size:.88rem;padding:9px 0;border-top:1px solid var(--line)}
+.srow span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srow span:last-child{color:var(--muted);text-align:right;font-size:.8rem}
+.sec{font:500 1.05rem var(--serif);margin-top:4px}
+.fld{display:grid;gap:10px}
+.fld .num{width:100%;text-align:left}
 </style>
 </head>
 <body>
@@ -137,12 +163,14 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     <svg class="logo" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><g id="rays"></g></svg>
     <div class="ttl"><h1>Reset Radar</h1><div class="clock" id="clock"></div></div>
     <button class="ib" id="themeBtn" aria-label="Alternar tema"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+    <button class="ib" id="statBtn" aria-label="Estatísticas"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 20V11M12 20V5M19 20v-6"/></svg></button>
     <button class="ib" id="setBtn" aria-label="Ajustes"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></button>
   </header>
 
   <section class="hero" id="hero" aria-live="polite">
     <div class="hl" id="hl"></div><div class="ht" id="ht"></div><div class="hs" id="hs"></div>
     <div class="hbar"><i id="hb"></i></div>
+    <button class="btn primary" id="nextBtn" hidden>Usar próxima conta</button>
   </section>
 
   <section class="tl" id="tl" hidden>
@@ -156,6 +184,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     <button class="tab" data-f="wait">Contando<b id="cWait">0</b></button>
   </nav>
 
+  <input class="srch" id="q" type="search" placeholder="Buscar por nome, e-mail ou etiqueta" autocomplete="off">
   <main class="list" id="list"></main>
 </div>
 
@@ -166,6 +195,10 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
   <h2 id="dlgTitle">Adicionar contas</h2>
   <label><span id="fLabel">E-mails (um por linha)</span>
     <textarea id="fEmail" rows="4" required autocomplete="off" placeholder="conta1@gmail.com&#10;conta2@gmail.com"></textarea></label>
+  <div class="fld" id="editOnly" hidden>
+    <label>Apelido<input id="fName" type="text" autocomplete="off" placeholder="ex.: Projeto loja"></label>
+    <label>Etiqueta<input id="fTag" type="text" autocomplete="off" placeholder="ex.: backup"></label>
+  </div>
   <label>Última mensagem enviada há (minutos)
     <input id="fAgo" type="number" min="0" step="1" inputmode="numeric" placeholder="vazio = conta livre"></label>
   <p class="hint">Se a conta já está em contagem, diga há quantos minutos você começou. Vazio cadastra como livre.</p>
@@ -181,10 +214,32 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
   <div class="set"><div><b>Avisar antes</b><small>Alerta de quase pronta</small></div>
     <select class="sel" id="selLead"><option value="0">Desligado</option><option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option></select></div>
   <div class="set"><div><b>Janela de reset</b><small>Em horas</small></div><input class="num" type="number" id="durInp" min="1" max="24" step="0.5" inputmode="decimal"></div>
+  <div class="set"><div><b>PIN de bloqueio</b><small>Esconde as contas ao abrir</small></div><button class="btn" id="pinBtn">Definir</button></div>
+  <button class="btn" id="icsAll">Lembretes no calendário (.ics)</button>
   <div class="row2"><button class="btn" id="expBtn">Exportar backup</button><button class="btn" id="impBtn">Importar backup</button></div>
   <input type="file" id="impFile" accept="application/json" hidden>
   <button class="btn primary" id="closeSet">Pronto</button>
 </div></dialog>
+
+<dialog id="stat"><div class="sheet"><div class="grab"></div><h2>Estatísticas</h2><div id="statBody" class="fld"></div><button class="btn primary" id="closeStat">Fechar</button></div></dialog>
+
+<div id="lock" hidden><form id="lockForm" autocomplete="off">
+  <svg class="logo" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true"><g id="rays2"></g></svg>
+  <h2 id="lockT">Digite o PIN</h2><p class="hint" id="lockS"></p>
+  <input id="pinIn" type="password" inputmode="numeric" maxlength="6" autocomplete="off" aria-label="PIN">
+  <button class="btn primary" type="submit">Entrar</button>
+  <button class="btn" type="button" id="lockCancel" hidden>Cancelar</button>
+</form></div>
+
+<dialog id="lim"><form method="dialog" class="sheet" id="limForm">
+  <div class="grab"></div>
+  <h2>Bati o limite</h2>
+  <p class="hint" id="limWho"></p>
+  <label>Horário do reset mostrado pelo Claude<input id="limTime" type="time"></label>
+  <label>Ou faltam quantos minutos<input id="limMin" type="number" min="1" max="1440" inputmode="numeric" placeholder="ex.: 187"></label>
+  <p class="hint">Use o horário da mensagem de limite atingido. A contagem passa a usar esse horário exato, no lugar da estimativa.</p>
+  <div class="row2"><button type="button" class="btn" id="limCancel">Cancelar</button><button type="submit" class="btn primary">Salvar horário</button></div>
+</form></dialog>
 
 <div id="toasts" aria-live="polite"></div>
 
@@ -193,14 +248,14 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
   const KEY = "claude-reset-radar:v1", C = 131.95;
   const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
   const root = document.documentElement;
-  let state = load(), filter = "all", openId = null, editingId = null, audioCtx = null, wakeLock = null;
+  let state = load(), filter = "all", openId = null, editingId = null, audioCtx = null, wakeLock = null, initAgo = "", limId = null;
 
   function load(){
     try{ const s = JSON.parse(localStorage.getItem(KEY));
-      if(s && Array.isArray(s.accounts)) return {hours:s.hours||5, lead:s.lead||0, sound:s.sound!==false, accounts:s.accounts}; }catch(e){}
-    return {hours:5, lead:0, sound:true, accounts:[]};
+      if(s && Array.isArray(s.accounts)) return {hours:s.hours||5, lead:s.lead||0, sound:s.sound!==false, updatedAt:s.updatedAt||0, accounts:s.accounts}; }catch(e){}
+    return {hours:5, lead:0, sound:true, updatedAt:0, accounts:[]};
   }
-  const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){ toast("Não foi possível salvar neste navegador.", true); } };
+  const save = quiet => { if(!quiet) state.updatedAt = Date.now(); try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){ toast("Não foi possível salvar neste navegador.", true); } };
   const uid = () => Math.random().toString(36).slice(2,9);
   const dur = () => state.hours*3600000;
   const endOf = a => a.startedAt + dur();
@@ -208,7 +263,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
   const fmt = ms => { ms = Math.max(0, Math.ceil(ms/1000)); return `${pad(Math.floor(ms/3600))}:${pad(Math.floor(ms%3600/60))}:${pad(ms%60)}`; };
   const hhmm = t => new Date(t).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
   const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const initial = a => (a.email.trim()[0] || "?").toUpperCase();
+  const initial = a => ((a.name||a.email).trim()[0] || "?").toUpperCase();
   const statusOf = (a,now) => !a.startedAt ? "idle" : now >= endOf(a) ? "ready" : "counting";
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
   const isStandalone = navigator.standalone === true || matchMedia("(display-mode:standalone)").matches;
@@ -220,12 +275,14 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
   const rowHTML = a => `<article class="row${a.id===openId?" open":""}" data-id="${a.id}">
     <div class="rt"><button class="rmain" data-act="toggle">
       <div class="av"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="t" cx="24" cy="24" r="21"/><circle class="p" cx="24" cy="24" r="21"/></svg><span>${esc(initial(a))}</span></div>
-      <div class="meta"><div class="em">${esc(a.email)}</div><div class="st"></div></div>
+      <div class="meta"><div class="em">${esc(a.name||a.email)}${a.tag?`<span class="tag">${esc(a.tag)}</span>`:""}</div><div class="st"></div></div>
       <div class="tm"></div></button>
       <button class="go" data-act="use">Usei agora</button></div>
     <div class="more"><div class="mi"></div><div class="ma">
+      <button class="btn wide" data-act="limit">Bati o limite: informar horário do reset</button>
       <button class="btn" data-act="copy">Copiar e-mail</button><button class="btn" data-act="free">Liberar</button>
-      <button class="btn" data-act="edit">Ajustar</button><button class="btn danger" data-act="del">Remover</button></div></div></article>`;
+      <button class="btn" data-act="edit">Ajustar</button><button class="btn danger" data-act="del">Remover</button>
+      <button class="btn wide" data-act="ics">Lembrete no calendário</button></div></div></article>`;
 
   function render(){
     const now = Date.now(), ord = {ready:0, idle:1, counting:2};
@@ -235,6 +292,8 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     });
     if(filter==="ready") list = list.filter(a => statusOf(a,now)!=="counting");
     if(filter==="wait") list = list.filter(a => statusOf(a,now)==="counting");
+    const q = ($("#q").value||"").trim().toLowerCase();
+    if(q) list = list.filter(a => [a.name,a.email,a.tag].join(" ").toLowerCase().includes(q));
     $("#list").innerHTML = list.length ? list.map(rowHTML).join("")
       : state.accounts.length ? '<div class="empty"><b>Nada por aqui</b>Nenhuma conta nesta aba.</div>'
       : '<div class="empty"><b>Nenhuma conta ainda</b>Toque em Adicionar e cadastre seus e-mails. Ao enviar a primeira mensagem de cada conta, toque em “Usei agora”.</div>';
@@ -259,13 +318,13 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
       const prog = st==="counting" ? (now-a.startedAt)/dur() : st==="ready" ? 1 : 0;
       el.querySelector(".p").style.strokeDashoffset = C*(1-Math.min(1,prog));
       el.querySelector(".tm").textContent = fmt(left);
-      el.querySelector(".st").textContent = st==="counting" ? "Libera às "+hhmm(endOf(a)) : st==="ready" ? "Pronta desde "+hhmm(endOf(a)) : "Livre, sem contagem";
+      el.querySelector(".st").textContent = st==="counting" ? "Libera às "+hhmm(endOf(a))+(a.exact ? " (confirmado)" : " (estimado)") : st==="ready" ? "Pronta desde "+hhmm(endOf(a)) : "Livre, sem contagem";
       if(a.id===openId){
         const n = (a.uses||[]).filter(t => now-t < 864e5).length;
-        el.querySelector(".mi").textContent = n ? `${n} ${n>1?"usos":"uso"} nas últimas 24 horas` : "Nenhum uso nas últimas 24 horas";
+        el.querySelector(".mi").textContent = (a.name ? a.email + ". " : "") + (n ? `${n} ${n>1?"usos":"uso"} nas últimas 24 horas` : "Nenhum uso nas últimas 24 horas");
       }
     });
-    if(dirty) save();
+    if(dirty) save(true);
 
     $("#cAll").textContent = state.accounts.length; $("#cReady").textContent = ready; $("#cWait").textContent = wait;
     const hero = $("#hero");
@@ -276,17 +335,18 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
       $("#hb").style.width = "100%";
     } else if(nx){
       hero.className = "hero"; $("#hl").textContent = "Próxima libera em";
-      $("#ht").textContent = fmt(nx.left); $("#hs").textContent = `${nx.a.email}, às ${hhmm(endOf(nx.a))}`;
+      $("#ht").textContent = fmt(nx.left); $("#hs").textContent = `${nx.a.name||nx.a.email}, às ${hhmm(endOf(nx.a))}`;
       $("#hb").style.width = (100 - nx.left/dur()*100) + "%";
     } else {
       hero.className = "hero"; $("#hl").textContent = "Comece por aqui";
       $("#ht").textContent = "Sem contas"; $("#hs").textContent = "Adicione um e-mail para acompanhar o reset"; $("#hb").style.width = "0";
     }
+    $("#nextBtn").hidden = !ready;
     const tl = $("#tl"); tl.hidden = !wait;
     if(wait){
       $("#tlr").textContent = "em " + state.hours + " h";
       $("#tlt").innerHTML = state.accounts.filter(a => statusOf(a,now)==="counting")
-        .map(a => `<span class="tlm" style="left:${Math.min(100,(endOf(a)-now)/dur()*100)}%" title="${esc(a.email)}">${esc(initial(a))}</span>`).join("");
+        .map(a => `<span class="tlm" style="left:${Math.min(100,(endOf(a)-now)/dur()*100)}%" title="${esc(a.name||a.email)}">${esc(initial(a))}</span>`).join("");
     }
     document.title = (ready ? `(${ready}) ` : "") + "Reset Radar";
     try{ ready ? navigator.setAppBadge && navigator.setAppBadge(ready) : navigator.clearAppBadge && navigator.clearAppBadge(); }catch(e){}
@@ -306,11 +366,11 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     }catch(e){}
   }
   async function notify(a, kind, left){
-    const pre = kind==="pre", mins = pre ? Math.ceil(left/60000) : 0;
-    toast(pre ? `${a.email} libera em ${mins} min` : `${a.email} está pronta para uso`);
+    const em = a.name || a.email, pre = kind==="pre", mins = pre ? Math.ceil(left/60000) : 0;
+    toast(pre ? `${em} libera em ${mins} min` : `${em} está pronta para uso`);
     if(state.sound){ beep(); if(navigator.vibrate) navigator.vibrate([250,100,250,100,400]); }
     if("Notification" in window && Notification.permission==="granted"){
-      const opts = {body: pre ? `${a.email} libera em ${mins} min.` : `${a.email} já pode receber novas mensagens.`, tag:(pre?"pre-":"reset-")+a.id, renotify:true, icon:"icon-192.png", badge:"icon-192.png"};
+      const opts = {body: pre ? `${em} libera em ${mins} min.` : `${em} já pode receber novas mensagens.`, tag:(pre?"pre-":"reset-")+a.id, renotify:true, icon:"icon-192.png", badge:"icon-192.png"};
       const title = pre ? "Quase pronta" : "Conta pronta";
       try{
         const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration();
@@ -318,13 +378,18 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
       }catch(e){ try{ new Notification(title, opts); }catch(_){} }
     }
   }
-  function toast(msg, err){
-    const t = document.createElement("div"); t.className = "toast"+(err?" err":""); t.textContent = msg;
-    $("#toasts").appendChild(t); setTimeout(() => t.remove(), 4200);
+  function toast(msg, err, undo){
+    const t = document.createElement("div"); t.className = "toast"+(err?" err":"");
+    const m = document.createElement("span"); m.textContent = msg; t.appendChild(m);
+    if(undo){ const b = document.createElement("button"); b.textContent = "Desfazer"; b.onclick = () => { undo(); t.remove(); }; t.appendChild(b); }
+    $("#toasts").appendChild(t); setTimeout(() => t.remove(), undo ? 7000 : 4200);
   }
   addEventListener("pointerdown", () => { try{ audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }, {once:true});
+  let hiddenAt = 0;
   document.addEventListener("visibilitychange", async () => {
-    if(document.hidden) return; tick();
+    if(document.hidden){ hiddenAt = Date.now(); return; }
+    if(pinData() && hiddenAt && Date.now()-hiddenAt > 60000){ $$("dialog[open]").forEach(d => d.close()); showLock("unlock"); }
+    tick();
     if($("#swWake").checked && !wakeLock){ try{ wakeLock = await navigator.wakeLock.request("screen"); }catch(e){} }
   });
 
@@ -338,12 +403,12 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
       return;
     }
     if(act==="edit") return openDlg(a);
-    if(act==="use"){
-      a.startedAt = now; a.notified = false; a.pre = false; a.uses = [...(a.uses||[]).filter(t => now-t < 864e5), now];
-      if(navigator.vibrate) navigator.vibrate(30); toast(`Contagem iniciada, libera às ${hhmm(endOf(a))}`); openId = null;
-    }
-    if(act==="free"){ a.startedAt = null; a.notified = false; a.pre = false; }
-    if(act==="del"){ if(!confirm(`Remover ${a.email}?`)) return; state.accounts = state.accounts.filter(x => x.id!==id); openId = null; }
+    if(act==="limit") return openLim(a);
+    const snap = JSON.stringify(state.accounts), undo = () => { state.accounts = JSON.parse(snap); save(); render(); };
+    if(act==="ics") return downloadICS([a]);
+    if(act==="use"){ startUse(a); toast(`Contagem iniciada, libera às ${hhmm(endOf(a))}`, false, undo); openId = null; }
+    if(act==="free"){ a.startedAt = null; a.notified = false; a.pre = false; a.exact = false; toast("Conta liberada", false, undo); }
+    if(act==="del"){ state.accounts = state.accounts.filter(x => x.id!==id); openId = null; toast("Conta removida", false, undo); }
     save(); render();
   });
   $$(".tab").forEach(t => t.onclick = () => { filter = t.dataset.f; $$(".tab").forEach(x => x.classList.toggle("on", x===t)); render(); });
@@ -354,8 +419,9 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     $("#dlgTitle").textContent = a ? "Ajustar conta" : "Adicionar contas";
     $("#fLabel").textContent = a ? "E-mail ou apelido" : "E-mails (um por linha)";
     $("#fEmail").rows = a ? 1 : 4; $("#fEmail").value = a ? a.email : "";
+    $("#editOnly").hidden = !a; $("#fName").value = a ? a.name||"" : ""; $("#fTag").value = a ? a.tag||"" : "";
     $("#fAgo").value = a && a.startedAt ? Math.max(0, Math.round((Date.now()-a.startedAt)/60000)) : "";
-    dlg.showModal(); $("#fEmail").focus();
+    initAgo = $("#fAgo").value; dlg.showModal(); $("#fEmail").focus();
   }
   $("#addBtn").onclick = () => openDlg(null);
   $("#cancelBtn").onclick = () => dlg.close();
@@ -366,7 +432,8 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     const done = startedAt && Date.now() >= startedAt + dur();
     if(editingId){
       const a = state.accounts.find(x => x.id===editingId), email = raw.trim().split("\n")[0];
-      if(!email) return; a.email = email; a.startedAt = startedAt; a.notified = !!done; a.pre = false;
+      if(!email) return; a.email = email; a.name = $("#fName").value.trim(); a.tag = $("#fTag").value.trim();
+      if(agoRaw !== initAgo){ a.startedAt = startedAt; a.notified = !!done; a.pre = false; a.exact = false; }
     } else {
       const emails = raw.split(/[\n,;]+/).map(t => t.trim()).filter(Boolean);
       if(!emails.length) return;
@@ -375,7 +442,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     }
     save(); dlg.close(); render();
   });
-  [dlg, $("#set")].forEach(d => d.addEventListener("click", e => { if(e.target===d) d.close(); }));
+  [dlg, $("#set"), $("#stat"), $("#lim")].forEach(d => d.addEventListener("click", e => { if(e.target===d) d.close(); }));
 
   /* ---------- ajustes ---------- */
   const sset = $("#set");
@@ -418,11 +485,113 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     try{
       const s = JSON.parse(await e.target.files[0].text()); if(!Array.isArray(s.accounts)) throw 0;
       state = {hours:s.hours||5, lead:s.lead||0, sound:s.sound!==false,
-        accounts:s.accounts.map(a => ({id:a.id||uid(), email:String(a.email||"conta"), startedAt:a.startedAt||null, notified:!!a.notified, pre:!!a.pre, uses:a.uses||[]}))};
+        accounts:s.accounts.map(a => ({id:a.id||uid(), email:String(a.email||"conta"), startedAt:a.startedAt||null, notified:!!a.notified, pre:!!a.pre, uses:a.uses||[], name:a.name||"", tag:a.tag||"", exact:!!a.exact}))};
       save(); render(); toast("Backup importado");
     }catch(_){ toast("Arquivo inválido.", true); }
     e.target.value = "";
   };
+
+  /* ---------- usar próxima ---------- */
+  function startUse(a){
+    const now = Date.now(); a.startedAt = now; a.notified = false; a.pre = false; a.exact = false;
+    a.uses = [...(a.uses||[]).filter(t => now-t < 30*864e5), now]; if(navigator.vibrate) navigator.vibrate(30);
+  }
+  $("#nextBtn").onclick = () => {
+    const now = Date.now(), c = state.accounts.filter(a => statusOf(a,now)!=="counting")
+      .sort((x,y) => (x.startedAt?endOf(x):9e15) - (y.startedAt?endOf(y):9e15))[0];
+    if(!c) return;
+    const snap = JSON.stringify(state.accounts), undo = () => { state.accounts = JSON.parse(snap); save(); render(); };
+    try{ navigator.clipboard.writeText(c.email); }catch(e){}
+    startUse(c); save(); render();
+    toast(`${c.name||c.email}: e-mail copiado, contagem iniciada`, false, undo);
+    window.open("https://claude.ai/new", "_blank");
+  };
+  $("#q").oninput = render;
+
+  /* ---------- calendário ---------- */
+  function downloadICS(list){
+    const f = t => new Date(t).toISOString().replace(/[-:]|\.\d{3}/g,"");
+    const L = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Reset Radar//PT","CALSCALE:GREGORIAN"];
+    list.forEach(a => { const e = endOf(a);
+      L.push("BEGIN:VEVENT",`UID:${a.id}-${a.startedAt}@reset-radar`,`DTSTAMP:${f(Date.now())}`,`DTSTART:${f(e)}`,`DTEND:${f(e+9e5)}`,
+        `SUMMARY:Claude liberada: ${(a.name||a.email).replace(/[,;\\]/g," ")}`,"BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:Conta pronta para uso","TRIGGER:PT0S","END:VALARM","END:VEVENT"); });
+    L.push("END:VCALENDAR");
+    const el = document.createElement("a");
+    el.href = URL.createObjectURL(new Blob([L.join("\r\n")], {type:"text/calendar"})); el.download = "reset-radar.ics"; el.click();
+    setTimeout(() => URL.revokeObjectURL(el.href), 1500);
+  }
+  $("#icsAll").onclick = () => {
+    const now = Date.now(), l = state.accounts.filter(a => statusOf(a,now)==="counting");
+    l.length ? downloadICS(l) : toast("Nenhuma conta em contagem.", true);
+  };
+
+  /* ---------- estatísticas ---------- */
+  function showStats(){
+    const now = Date.now(), day0 = new Date().setHours(0,0,0,0);
+    const all = state.accounts.flatMap(a => (a.uses||[]).map(t => ({a,t})));
+    const today = all.filter(u => u.t>=day0).length, wk = all.filter(u => now-u.t < 7*864e5).length;
+    const hrs = Array(24).fill(0); all.forEach(u => hrs[new Date(u.t).getHours()]++);
+    const mx = Math.max(1,...hrs), peak = all.length ? hrs.indexOf(Math.max(...hrs)) : -1;
+    const gap = a => {
+      const u = [...(a.uses||[])].sort((x,y) => x-y), d = [];
+      for(let i=1;i<u.length;i++){ const x = u[i]-u[i-1]; if(x<864e5) d.push(x); }
+      if(!d.length) return "sem dados";
+      const m = Math.round(d.reduce((p,c) => p+c)/d.length/6e4); return Math.floor(m/60)+" h "+pad(m%60)+" min";
+    };
+    $("#statBody").innerHTML = `<div class="kpis"><div class="kpi"><b>${today}</b><small>usos hoje</small></div><div class="kpi"><b>${wk}</b><small>em 7 dias</small></div><div class="kpi"><b>${peak<0?"–":pad(peak)+"h"}</b><small>horário de pico</small></div></div>
+      <div class="sec">Uso por hora do dia</div><div><div class="bars">${hrs.map((n,h) => `<i title="${pad(h)}h: ${n}" style="height:${Math.max(4,n/mx*100)}%"></i>`).join("")}</div><div class="bl"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>23h</span></div></div>
+      <div class="sec">Por conta</div>${state.accounts.length ? state.accounts.map(a => `<div class="srow"><span>${esc(a.name||a.email)}</span><span>${(a.uses||[]).filter(t => now-t<7*864e5).length} usos em 7 dias, intervalo médio ${gap(a)}</span></div>`).join("") : '<p class="hint">Sem contas.</p>'}`;
+    $("#stat").showModal();
+  }
+  $("#statBtn").onclick = showStats; $("#closeStat").onclick = () => $("#stat").close();
+
+  /* ---------- PIN ---------- */
+  const pinData = () => { try{ return JSON.parse(localStorage.getItem(KEY+":pin")); }catch(e){ return null; } };
+  const hashPin = async (p,salt) => [...new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(salt+":"+p)))].map(x => x.toString(16).padStart(2,"0")).join("");
+  let pinMode = "unlock";
+  function showLock(mode){
+    pinMode = mode; $("#lock").hidden = false; $("#pinIn").value = "";
+    $("#lockT").textContent = mode==="set" ? "Crie um PIN" : "Digite o PIN";
+    $("#lockS").textContent = mode==="set" ? "De 4 a 6 números" : "O app está bloqueado";
+    $("#lockCancel").hidden = mode!=="set"; $("#pinIn").focus();
+  }
+  const updatePinUI = () => { $("#pinBtn").textContent = pinData() ? "Remover" : "Definir"; };
+  $("#lockForm").onsubmit = async e => {
+    e.preventDefault(); const p = $("#pinIn").value;
+    if(!/^\d{4,6}$/.test(p)) return toast("Use de 4 a 6 números", true);
+    if(pinMode==="set"){
+      const salt = uid()+uid(); localStorage.setItem(KEY+":pin", JSON.stringify({salt, h:await hashPin(p,salt)}));
+      $("#lock").hidden = true; updatePinUI(); toast("PIN definido");
+    } else {
+      const d = pinData();
+      if(d && await hashPin(p,d.salt)===d.h) $("#lock").hidden = true; else { toast("PIN incorreto", true); $("#pinIn").value = ""; }
+    }
+  };
+  $("#lockCancel").onclick = () => { $("#lock").hidden = true; };
+  $("#pinBtn").onclick = () => {
+    if(!(window.crypto && crypto.subtle)) return toast("O PIN exige HTTPS neste navegador.", true);
+    if(pinData()){ localStorage.removeItem(KEY+":pin"); updatePinUI(); toast("PIN removido"); }
+    else { $("#set").close(); showLock("set"); }
+  };
+
+  /* ---------- bati o limite ---------- */
+  function openLim(a){
+    limId = a.id; $("#limWho").textContent = a.name || a.email;
+    $("#limTime").value = ""; $("#limMin").value = ""; $("#lim").showModal();
+  }
+  $("#limCancel").onclick = () => $("#lim").close();
+  $("#limForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const a = state.accounts.find(x => x.id===limId); if(!a) return;
+    const now = Date.now(), t = $("#limTime").value, m = Number($("#limMin").value);
+    let reset = null;
+    if(m > 0) reset = now + m*6e4;
+    else if(t){ const [h,mi] = t.split(":").map(Number), d = new Date(); d.setHours(h,mi,0,0); reset = d.getTime(); if(reset < now-6e4) reset += 864e5; }
+    if(!reset) return toast("Informe o horário ou os minutos restantes.", true);
+    const snap = JSON.stringify(state.accounts), undo = () => { state.accounts = JSON.parse(snap); save(); render(); };
+    a.startedAt = reset - dur(); a.exact = true; a.notified = false; a.pre = false;
+    save(); $("#lim").close(); render(); toast(`Libera às ${hhmm(reset)}`, false, undo);
+  });
 
   /* ---------- tema ---------- */
   const mq = matchMedia("(prefers-color-scheme:dark)");
@@ -437,6 +606,8 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
 
   /* ---------- início ---------- */
   if("serviceWorker" in navigator && location.protocol!=="file:") navigator.serviceWorker.register("sw.js").catch(() => {});
+  $("#rays2").innerHTML = $("#rays").innerHTML; updatePinUI();
+  if(pinData()) showLock("unlock");
   render(); setInterval(tick, 1000);
 })();
 </script>

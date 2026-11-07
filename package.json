@@ -1,0 +1,6 @@
+{
+  "name": "reset-radar-api",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": { "web-push": "^3.6.7" }
+}

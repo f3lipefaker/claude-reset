@@ -1,4 +1,4 @@
-const CACHE = "reset-radar-v2";
+const CACHE = "reset-radar-v3";
 const ARQUIVOS = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", e => {
@@ -11,9 +11,10 @@ self.addEventListener("activate", e => {
       .then(() => self.clients.claim())
   );
 });
-// rede primeiro; se estiver offline, usa a cópia salva
+// rede primeiro; offline usa a cópia salva (a API do servidor nunca é guardada)
 self.addEventListener("fetch", e => {
-  if (e.request.method !== "GET") return;
+  const u = new URL(e.request.url);
+  if (e.request.method !== "GET" || u.pathname.includes("/api/")) return;
   e.respondWith(
     fetch(e.request).then(r => {
       const cp = r.clone();
@@ -21,6 +22,15 @@ self.addEventListener("fetch", e => {
       return r;
     }).catch(() => caches.match(e.request))
   );
+});
+// notificação enviada pelo servidor, mesmo com o app fechado
+self.addEventListener("push", e => {
+  let d = {};
+  try { d = e.data.json(); } catch (_) {}
+  e.waitUntil(self.registration.showNotification(d.title || "Reset Radar", {
+    body: d.body || "", tag: d.tag || "reset", renotify: true,
+    icon: "icon-192.png", badge: "icon-192.png", requireInteraction: true
+  }));
 });
 self.addEventListener("notificationclick", e => {
   e.notification.close();
