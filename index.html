@@ -155,6 +155,8 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
 .sec{font:500 1.05rem var(--serif);margin-top:4px}
 .fld{display:grid;gap:10px}
 .fld .num{width:100%;text-align:left}
+.nt{font-size:.8rem;color:var(--text);opacity:.85;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row.open .nt{white-space:normal}
 </style>
 </head>
 <body>
@@ -198,6 +200,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
   <div class="fld" id="editOnly" hidden>
     <label>Apelido<input id="fName" type="text" autocomplete="off" placeholder="ex.: Projeto loja"></label>
     <label>Etiqueta<input id="fTag" type="text" autocomplete="off" placeholder="ex.: backup"></label>
+    <label>Descrição<textarea id="fNote" rows="2" placeholder="ex.: Fazendo o design da página de login"></textarea></label>
   </div>
   <label>Última mensagem enviada há (minutos)
     <input id="fAgo" type="number" min="0" step="1" inputmode="numeric" placeholder="vazio = conta livre"></label>
@@ -237,6 +240,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
   <p class="hint" id="limWho"></p>
   <label>Horário do reset mostrado pelo Claude<input id="limTime" type="time"></label>
   <label>Ou faltam quantos minutos<input id="limMin" type="number" min="1" max="1440" inputmode="numeric" placeholder="ex.: 187"></label>
+  <label>O que você estava fazendo (opcional)<input id="limNote" type="text" autocomplete="off" placeholder="ex.: design da página de login"></label>
   <p class="hint">Use o horário da mensagem de limite atingido. A contagem passa a usar esse horário exato, no lugar da estimativa.</p>
   <div class="row2"><button type="button" class="btn" id="limCancel">Cancelar</button><button type="submit" class="btn primary">Salvar horário</button></div>
 </form></dialog>
@@ -275,7 +279,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
   const rowHTML = a => `<article class="row${a.id===openId?" open":""}" data-id="${a.id}">
     <div class="rt"><button class="rmain" data-act="toggle">
       <div class="av"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="t" cx="24" cy="24" r="21"/><circle class="p" cx="24" cy="24" r="21"/></svg><span>${esc(initial(a))}</span></div>
-      <div class="meta"><div class="em">${esc(a.name||a.email)}${a.tag?`<span class="tag">${esc(a.tag)}</span>`:""}</div><div class="st"></div></div>
+      <div class="meta"><div class="em">${esc(a.name||a.email)}${a.tag?`<span class="tag">${esc(a.tag)}</span>`:""}</div><div class="st"></div>${a.note?`<div class="nt">${esc(a.note)}</div>`:""}</div>
       <div class="tm"></div></button>
       <button class="go" data-act="use">Usei agora</button></div>
     <div class="more"><div class="mi"></div><div class="ma">
@@ -293,7 +297,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     if(filter==="ready") list = list.filter(a => statusOf(a,now)!=="counting");
     if(filter==="wait") list = list.filter(a => statusOf(a,now)==="counting");
     const q = ($("#q").value||"").trim().toLowerCase();
-    if(q) list = list.filter(a => [a.name,a.email,a.tag].join(" ").toLowerCase().includes(q));
+    if(q) list = list.filter(a => [a.name,a.email,a.tag,a.note].join(" ").toLowerCase().includes(q));
     $("#list").innerHTML = list.length ? list.map(rowHTML).join("")
       : state.accounts.length ? '<div class="empty"><b>Nada por aqui</b>Nenhuma conta nesta aba.</div>'
       : '<div class="empty"><b>Nenhuma conta ainda</b>Toque em Adicionar e cadastre seus e-mails. Ao enviar a primeira mensagem de cada conta, toque em “Usei agora”.</div>';
@@ -366,11 +370,11 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     }catch(e){}
   }
   async function notify(a, kind, left){
-    const em = a.name || a.email, pre = kind==="pre", mins = pre ? Math.ceil(left/60000) : 0;
-    toast(pre ? `${em} libera em ${mins} min` : `${em} está pronta para uso`);
+    const em = a.name || a.email, nt = a.note ? " Parou em: "+a.note+"." : "", pre = kind==="pre", mins = pre ? Math.ceil(left/60000) : 0;
+    toast(pre ? `${em} libera em ${mins} min` : `${em} está pronta${a.note ? ": "+a.note : " para uso"}`);
     if(state.sound){ beep(); if(navigator.vibrate) navigator.vibrate([250,100,250,100,400]); }
     if("Notification" in window && Notification.permission==="granted"){
-      const opts = {body: pre ? `${em} libera em ${mins} min.` : `${em} já pode receber novas mensagens.`, tag:(pre?"pre-":"reset-")+a.id, renotify:true, icon:"icon-192.png", badge:"icon-192.png"};
+      const opts = {body: pre ? `${em} libera em ${mins} min.${nt}` : `${em} já pode receber novas mensagens.${nt}`, tag:(pre?"pre-":"reset-")+a.id, renotify:true, icon:"icon-192.png", badge:"icon-192.png"};
       const title = pre ? "Quase pronta" : "Conta pronta";
       try{
         const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration();
@@ -419,7 +423,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     $("#dlgTitle").textContent = a ? "Ajustar conta" : "Adicionar contas";
     $("#fLabel").textContent = a ? "E-mail ou apelido" : "E-mails (um por linha)";
     $("#fEmail").rows = a ? 1 : 4; $("#fEmail").value = a ? a.email : "";
-    $("#editOnly").hidden = !a; $("#fName").value = a ? a.name||"" : ""; $("#fTag").value = a ? a.tag||"" : "";
+    $("#editOnly").hidden = !a; $("#fName").value = a ? a.name||"" : ""; $("#fTag").value = a ? a.tag||"" : ""; $("#fNote").value = a ? a.note||"" : "";
     $("#fAgo").value = a && a.startedAt ? Math.max(0, Math.round((Date.now()-a.startedAt)/60000)) : "";
     initAgo = $("#fAgo").value; dlg.showModal(); $("#fEmail").focus();
   }
@@ -432,7 +436,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     const done = startedAt && Date.now() >= startedAt + dur();
     if(editingId){
       const a = state.accounts.find(x => x.id===editingId), email = raw.trim().split("\n")[0];
-      if(!email) return; a.email = email; a.name = $("#fName").value.trim(); a.tag = $("#fTag").value.trim();
+      if(!email) return; a.email = email; a.name = $("#fName").value.trim(); a.tag = $("#fTag").value.trim(); a.note = $("#fNote").value.trim();
       if(agoRaw !== initAgo){ a.startedAt = startedAt; a.notified = !!done; a.pre = false; a.exact = false; }
     } else {
       const emails = raw.split(/[\n,;]+/).map(t => t.trim()).filter(Boolean);
@@ -485,7 +489,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     try{
       const s = JSON.parse(await e.target.files[0].text()); if(!Array.isArray(s.accounts)) throw 0;
       state = {hours:s.hours||5, lead:s.lead||0, sound:s.sound!==false,
-        accounts:s.accounts.map(a => ({id:a.id||uid(), email:String(a.email||"conta"), startedAt:a.startedAt||null, notified:!!a.notified, pre:!!a.pre, uses:a.uses||[], name:a.name||"", tag:a.tag||"", exact:!!a.exact}))};
+        accounts:s.accounts.map(a => ({id:a.id||uid(), email:String(a.email||"conta"), startedAt:a.startedAt||null, notified:!!a.notified, pre:!!a.pre, uses:a.uses||[], name:a.name||"", tag:a.tag||"", exact:!!a.exact, note:a.note||""}))};
       save(); render(); toast("Backup importado");
     }catch(_){ toast("Arquivo inválido.", true); }
     e.target.value = "";
@@ -577,7 +581,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
   /* ---------- bati o limite ---------- */
   function openLim(a){
     limId = a.id; $("#limWho").textContent = a.name || a.email;
-    $("#limTime").value = ""; $("#limMin").value = ""; $("#lim").showModal();
+    $("#limTime").value = ""; $("#limMin").value = ""; $("#limNote").value = a.note || ""; $("#lim").showModal();
   }
   $("#limCancel").onclick = () => $("#lim").close();
   $("#limForm").addEventListener("submit", e => {
@@ -589,7 +593,7 @@ label input:focus,label textarea:focus,.sel:focus,.num:focus{outline:none;border
     else if(t){ const [h,mi] = t.split(":").map(Number), d = new Date(); d.setHours(h,mi,0,0); reset = d.getTime(); if(reset < now-6e4) reset += 864e5; }
     if(!reset) return toast("Informe o horário ou os minutos restantes.", true);
     const snap = JSON.stringify(state.accounts), undo = () => { state.accounts = JSON.parse(snap); save(); render(); };
-    a.startedAt = reset - dur(); a.exact = true; a.notified = false; a.pre = false;
+    a.startedAt = reset - dur(); a.exact = true; a.notified = false; a.pre = false; a.note = $("#limNote").value.trim();
     save(); $("#lim").close(); render(); toast(`Libera às ${hhmm(reset)}`, false, undo);
   });
 
